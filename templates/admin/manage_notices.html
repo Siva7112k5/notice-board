@@ -1,0 +1,555 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Notices - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .manage-wrapper {
+        padding: 2rem 0;
+        background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+        min-height: calc(100vh - 76px);
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .page-header h2 {
+        margin: 0;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary-600), var(--primary-800));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .filters-section {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-lg);
+        margin-bottom: 2rem;
+        border: 1px solid var(--border-color);
+    }
+
+    .notices-table {
+        background: var(--white);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+    }
+
+    .table {
+        margin: 0;
+    }
+
+    .table thead th {
+        background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+        color: var(--white);
+        font-weight: 500;
+        border: none;
+        padding: 1rem;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .table tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        color: var(--text-primary);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .table tbody tr {
+        transition: all 0.3s;
+    }
+
+    .table tbody tr:hover {
+        background-color: var(--gray-50);
+        transform: scale(1.01);
+        box-shadow: var(--shadow);
+    }
+
+    .notice-title {
+        font-weight: 600;
+        color: var(--text-primary);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        max-width: 250px;
+    }
+
+    .badge-priority {
+        padding: 0.35rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .badge-urgent {
+        background: linear-gradient(135deg, var(--danger-100), var(--danger-200));
+        color: var(--danger-700);
+    }
+
+    .badge-high {
+        background: linear-gradient(135deg, var(--warning-100), var(--warning-200));
+        color: var(--warning-700);
+    }
+
+    .badge-normal {
+        background: linear-gradient(135deg, var(--gray-100), var(--gray-200));
+        color: var(--gray-700);
+    }
+
+    .status-badge {
+        padding: 0.35rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .status-active {
+        background: linear-gradient(135deg, var(--success-100), var(--success-200));
+        color: var(--success-700);
+    }
+
+    .status-expired {
+        background: linear-gradient(135deg, var(--danger-100), var(--danger-200));
+        color: var(--danger-700);
+    }
+
+    .action-btns {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-action {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        transition: all 0.3s;
+        border: none;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-3px);
+    }
+
+    .btn-view {
+        background: linear-gradient(135deg, var(--info-500), var(--info-600));
+    }
+
+    .btn-edit {
+        background: linear-gradient(135deg, var(--warning-500), var(--warning-600));
+    }
+
+    .btn-delete {
+        background: linear-gradient(135deg, var(--danger-500), var(--danger-600));
+    }
+
+    .search-box {
+        position: relative;
+    }
+
+    .search-box input {
+        padding-right: 3rem;
+        border-radius: 50px;
+        border: 2px solid var(--border-color);
+        height: 45px;
+    }
+
+    .search-box button {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        color: var(--white);
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .filter-select {
+        border-radius: 50px;
+        border: 2px solid var(--border-color);
+        height: 45px;
+    }
+
+    .bulk-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .checkbox-all, .checkbox-item {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        accent-color: var(--primary-500);
+    }
+
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .action-btns {
+            flex-direction: column;
+        }
+        
+        .btn-action {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="manage-wrapper">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h2><i class="fas fa-bullhorn me-2"></i>Manage Notices</h2>
+                <p class="text-muted mb-0">View and manage all notices in the system</p>
+            </div>
+            <a href="{{ url_for('add_notice') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Add New Notice
+            </a>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="search-box">
+                        <input type="text" class="form-control" placeholder="Search notices..." id="searchInput">
+                        <button type="button" onclick="searchNotices()"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select filter-select" id="categoryFilter">
+                        <option value="">All Categories</option>
+                        <option value="Academic">Academic</option>
+                        <option value="Event">Event</option>
+                        <option value="Holiday">Holiday</option>
+                        <option value="Exam">Exam</option>
+                        <option value="Result">Result</option>
+                        <option value="Important">Important</option>
+                        <option value="General">General</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select filter-select" id="priorityFilter">
+                        <option value="">All Priorities</option>
+                        <option value="urgent">Urgent</option>
+                        <option value="high">High</option>
+                        <option value="normal">Normal</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-outline-primary w-100" onclick="applyFilters()">
+                        <i class="fas fa-filter me-2"></i>Apply
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bulk Actions -->
+            <div class="bulk-actions mt-3">
+                <div class="form-check">
+                    <input class="form-check-input checkbox-all" type="checkbox" id="selectAll" onclick="toggleAll()">
+                    <label class="form-check-label" for="selectAll">Select All</label>
+                </div>
+                <select class="form-select w-auto" id="bulkAction">
+                    <option value="">Bulk Actions</option>
+                    <option value="delete">Delete Selected</option>
+                    <option value="feature">Feature Selected</option>
+                    <option value="unfeature">Unfeature Selected</option>
+                    <option value="publish">Publish Selected</option>
+                    <option value="unpublish">Unpublish Selected</option>
+                </select>
+                <button class="btn btn-warning" onclick="applyBulkAction()">Apply</button>
+            </div>
+        </div>
+
+        <!-- Notices Table -->
+        <div class="notices-table">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th width="40">
+                                <input class="form-check-input checkbox-all" type="checkbox" onclick="toggleAll()">
+                            </th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Priority</th>
+                            <th>Posted By</th>
+                            <th>Posted Date</th>
+                            <th>Expiry Date</th>
+                            <th>Status</th>
+                            <th>Views</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for notice in notices.items %}
+                        <tr data-notice-id="{{ notice.id }}" class="notice-row">
+                            <td>
+                                <input class="form-check-input checkbox-item" type="checkbox" value="{{ notice.id }}" onclick="updateSelectAll()">
+                            </td>
+                            <td>
+                                <div class="notice-title">{{ notice.title }}</div>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">{{ notice.category }}</span>
+                            </td>
+                            <td>
+                                <span class="badge-priority {% if notice.priority == 'urgent' %}badge-urgent{% elif notice.priority == 'high' %}badge-high{% else %}badge-normal{% endif %}">
+                                    {{ notice.priority|upper }}
+                                </span>
+                            </td>
+                            <td>{{ notice.author.username }}</td>
+                            <td>{{ notice.created_at.strftime('%d %b, %Y') }}</td>
+                            <td>{{ notice.expiry_date.strftime('%d %b, %Y') if notice.expiry_date else 'No expiry' }}</td>
+                            <td>
+                                {% if notice.is_active %}
+                                    <span class="status-badge status-active">Active</span>
+                                {% else %}
+                                    <span class="status-badge status-expired">Expired</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <i class="fas fa-eye me-1"></i>{{ notice.views }}
+                            </td>
+                            <td>
+                                <div class="action-btns">
+                                    <a href="{{ url_for('notice_detail', id=notice.id) }}" class="btn-action btn-view" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('edit_notice', id=notice.id) }}" class="btn-action btn-edit" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button class="btn-action btn-delete" onclick="deleteNotice({{ notice.id }})" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="10" class="text-center py-5">
+                                <i class="fas fa-bullhorn fa-3x text-muted mb-3"></i>
+                                <h5>No notices found</h5>
+                                <p class="text-muted">Get started by creating your first notice</p>
+                                <a href="{{ url_for('add_notice') }}" class="btn btn-primary">
+                                    <i class="fas fa-plus me-2"></i>Add Notice
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if notices.pages > 1 %}
+            <div class="p-3 border-top">
+                <nav>
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if notices.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('manage_notices', page=notices.prev_num) }}">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% for page_num in notices.iter_pages() %}
+                            {% if page_num %}
+                                <li class="page-item {% if page_num == notices.page %}active{% endif %}">
+                                    <a class="page-link" href="{{ url_for('manage_notices', page=page_num) }}">{{ page_num }}</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">...</span>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if notices.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('manage_notices', page=notices.next_num) }}">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Search functionality
+    function searchNotices() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const rows = document.querySelectorAll('.notice-row');
+        
+        rows.forEach(row => {
+            const title = row.querySelector('.notice-title').textContent.toLowerCase();
+            if (title.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    // Apply filters
+    function applyFilters() {
+        const category = document.getElementById('categoryFilter').value;
+        const priority = document.getElementById('priorityFilter').value;
+        const rows = document.querySelectorAll('.notice-row');
+        
+        rows.forEach(row => {
+            let show = true;
+            
+            if (category) {
+                const rowCategory = row.querySelector('td:nth-child(3) .badge').textContent.trim();
+                if (rowCategory !== category) show = false;
+            }
+            
+            if (priority && show) {
+                const rowPriority = row.querySelector('.badge-priority').textContent.trim().toLowerCase();
+                if (!rowPriority.includes(priority)) show = false;
+            }
+            
+            row.style.display = show ? '' : 'none';
+        });
+    }
+
+    // Select all functionality
+    function toggleAll() {
+        const selectAll = document.querySelector('.checkbox-all');
+        const checkboxes = document.querySelectorAll('.checkbox-item');
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = selectAll.checked;
+        });
+    }
+
+    function updateSelectAll() {
+        const selectAll = document.querySelector('.checkbox-all');
+        const checkboxes = document.querySelectorAll('.checkbox-item');
+        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+        const someChecked = Array.from(checkboxes).some(cb => cb.checked);
+        
+        selectAll.checked = allChecked;
+        selectAll.indeterminate = someChecked && !allChecked;
+    }
+
+    // Bulk actions
+    function applyBulkAction() {
+        const action = document.getElementById('bulkAction').value;
+        const selectedIds = Array.from(document.querySelectorAll('.checkbox-item:checked'))
+            .map(cb => cb.value);
+        
+        if (selectedIds.length === 0) {
+            showNotification('Please select at least one notice', 'warning');
+            return;
+        }
+        
+        if (!action) {
+            showNotification('Please select an action', 'warning');
+            return;
+        }
+        
+        if (action === 'delete') {
+            if (confirm(`Are you sure you want to delete ${selectedIds.length} notice(s)?`)) {
+                // Implement bulk delete
+                fetch('/admin/bulk-delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ ids: selectedIds, action: action })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Selected notices deleted successfully', 'success');
+                        location.reload();
+                    }
+                });
+            }
+        } else {
+            // Implement other bulk actions
+            showNotification(`Applied ${action} to ${selectedIds.length} notice(s)`, 'success');
+        }
+    }
+
+    // Delete single notice
+    function deleteNotice(id) {
+        if (confirm('Are you sure you want to delete this notice?')) {
+            fetch(`/admin/notice/delete/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Notice deleted successfully', 'success');
+                    document.querySelector(`tr[data-notice-id="${id}"]`).remove();
+                }
+            });
+        }
+    }
+
+    // Show notification
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+        notification.style.zIndex = '9999';
+        notification.innerHTML = `
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 
+                            type === 'danger' ? 'fa-exclamation-circle' : 
+                            'fa-info-circle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+
+    // Debounce search input
+    let searchTimeout;
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(searchNotices, 500);
+    });
+</script>
+{% endblock %}

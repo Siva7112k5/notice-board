@@ -1,0 +1,795 @@
+{% extends "base.html" %}
+
+{% block title %}All Notices - Digital Notice Board{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ==========================================================================
+       Page Header
+       ========================================================================== */
+    .page-header {
+        background: linear-gradient(135deg, var(--primary-700), var(--primary-900));
+        padding: 4rem 0;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: rotate 60s linear infinite;
+    }
+
+    .page-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient-gold);
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .page-title {
+        color: var(--white);
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        position: relative;
+        z-index: 2;
+        animation: fadeInDown 1s ease;
+    }
+
+    .page-header .breadcrumb {
+        background: transparent;
+        margin: 0;
+        justify-content: center;
+        position: relative;
+        z-index: 2;
+        animation: fadeInUp 1s ease;
+    }
+
+    .page-header .breadcrumb-item a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .page-header .breadcrumb-item a:hover {
+        color: var(--warning-400);
+    }
+
+    .page-header .breadcrumb-item.active {
+        color: var(--warning-400);
+    }
+
+    .page-header .breadcrumb-item + .breadcrumb-item::before {
+        color: rgba(255, 255, 255, 0.5);
+        content: "›";
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ==========================================================================
+       Filter Bar
+       ========================================================================== */
+    .filter-bar {
+        background: linear-gradient(135deg, var(--white), var(--gray-50));
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .filter-bar::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: var(--gradient-gold);
+    }
+
+    .filter-title {
+        display: flex;
+        align-items: center;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .filter-title i {
+        color: var(--primary-500);
+        font-size: 1.2rem;
+    }
+
+    .category-filter {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: flex-end;
+    }
+
+    .filter-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.6rem 1.2rem;
+        background: var(--gray-100);
+        color: var(--text-secondary);
+        border-radius: 50px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s;
+        border: 1px solid transparent;
+    }
+
+    .filter-chip:hover {
+        background: var(--gray-200);
+        color: var(--text-primary);
+        transform: translateY(-2px);
+    }
+
+    .filter-chip.active {
+        background: var(--gradient-gold);
+        color: var(--white);
+        box-shadow: 0 5px 15px rgba(229, 149, 40, 0.3);
+    }
+
+    .filter-chip i {
+        margin-right: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    /* ==========================================================================
+       Notice Cards
+       ========================================================================== */
+    .notice-card {
+        background: linear-gradient(135deg, var(--white), var(--gray-50));
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
+        transition: all 0.3s;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        border: 1px solid var(--border-color);
+    }
+
+    .notice-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient-gold);
+        transform: scaleX(0);
+        transition: transform 0.3s;
+    }
+
+    .notice-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .notice-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-2xl);
+    }
+
+    .notice-card.high-priority {
+        border-left: 4px solid var(--danger-500);
+    }
+
+    .notice-card.high-priority::before {
+        background: var(--gradient-danger);
+    }
+
+    .notice-image {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .notice-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+    }
+
+    .notice-card:hover .notice-image img {
+        transform: scale(1.1);
+    }
+
+    .notice-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: var(--gradient-danger);
+        color: var(--white);
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        z-index: 2;
+        box-shadow: 0 5px 15px rgba(229, 122, 75, 0.3);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    .notice-content {
+        padding: 1.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .notice-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        font-size: 0.85rem;
+    }
+
+    .notice-category {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.3rem 1rem;
+        border-radius: 50px;
+        font-weight: 600;
+    }
+
+    .notice-category.important {
+        background: var(--danger-100);
+        color: var(--danger-700);
+    }
+
+    .notice-category.event {
+        background: var(--success-100);
+        color: var(--success-700);
+    }
+
+    .notice-category.academic {
+        background: var(--primary-100);
+        color: var(--primary-700);
+    }
+
+    .notice-category.holiday {
+        background: var(--warning-100);
+        color: var(--warning-700);
+    }
+
+    .notice-category.general {
+        background: var(--gray-200);
+        color: var(--gray-700);
+    }
+
+    .notice-category i {
+        font-size: 0.8rem;
+    }
+
+    .notice-date {
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .notice-date i {
+        font-size: 0.8rem;
+    }
+
+    .notice-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        line-height: 1.4;
+    }
+
+    .notice-title a {
+        color: var(--text-primary);
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .notice-title a:hover {
+        color: var(--primary-600);
+    }
+
+    .notice-excerpt {
+        color: var(--text-secondary);
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+        flex: 1;
+    }
+
+    .notice-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color);
+        margin-top: auto;
+    }
+
+    .notice-stats {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    .notice-stats span {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .notice-stats i {
+        color: var(--primary-500);
+    }
+
+    .btn-save-notice {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--gray-100);
+        border: none;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 1.1rem;
+    }
+
+    .btn-save-notice:hover {
+        background: var(--warning-100);
+        color: var(--warning-600);
+        transform: scale(1.1);
+    }
+
+    .btn-save-notice.saved {
+        background: var(--danger-100);
+        color: var(--danger-600);
+    }
+
+    /* ==========================================================================
+       Pagination
+       ========================================================================== */
+    .pagination {
+        gap: 0.5rem;
+    }
+
+    .page-item .page-link {
+        border: none;
+        padding: 0.75rem 1rem;
+        min-width: 45px;
+        text-align: center;
+        color: var(--text-primary);
+        background: var(--white);
+        border-radius: 12px;
+        font-weight: 500;
+        transition: all 0.3s;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+    }
+
+    .page-item.active .page-link {
+        background: var(--gradient-gold);
+        color: var(--white);
+        border-color: transparent;
+        box-shadow: 0 5px 15px rgba(229, 149, 40, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .page-item .page-link:hover {
+        background: var(--primary-50);
+        color: var(--primary-600);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+    }
+
+    .page-item.disabled .page-link {
+        background: var(--gray-100);
+        color: var(--gray-400);
+        cursor: not-allowed;
+    }
+
+    /* ==========================================================================
+       Empty State
+       ========================================================================== */
+    .empty-state {
+        padding: 4rem 2rem;
+        background: linear-gradient(135deg, var(--white), var(--gray-50));
+        border-radius: 24px;
+        box-shadow: var(--shadow-lg);
+        max-width: 500px;
+        margin: 0 auto;
+        border: 1px solid var(--border-color);
+    }
+
+    .empty-state i {
+        color: var(--gray-400);
+        margin-bottom: 1.5rem;
+    }
+
+    .empty-state h3 {
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .empty-state p {
+        color: var(--text-secondary);
+        margin-bottom: 1.5rem;
+    }
+
+    .empty-state .btn-primary {
+        background: var(--gradient-gold);
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .empty-state .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(229, 149, 40, 0.3);
+    }
+
+    /* ==========================================================================
+       Responsive Design
+       ========================================================================== */
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2.2rem;
+        }
+
+        .filter-bar {
+            padding: 1rem;
+        }
+
+        .category-filter {
+            justify-content: flex-start;
+            margin-top: 1rem;
+        }
+
+        .filter-chip {
+            padding: 0.4rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        .notice-title {
+            font-size: 1.2rem;
+        }
+
+        .pagination {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .page-item .page-link {
+            padding: 0.5rem 0.75rem;
+            min-width: 35px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .page-title {
+            font-size: 1.8rem;
+        }
+
+        .notice-meta {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .notice-footer {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .btn-save-notice {
+            align-self: flex-end;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="page-title">All Notices</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center">
+                        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">All Notices</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Notices Section -->
+<section class="notices-section py-5">
+    <div class="container">
+        <!-- Filter Bar -->
+        <div class="filter-bar mb-4" data-aos="fade-down">
+            <div class="row align-items-center">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="filter-title">
+                        <i class="fas fa-filter me-2"></i>
+                        <span>Filter by Category:</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="category-filter">
+                        <a href="{{ url_for('all_notices') }}" 
+                           class="filter-chip {% if current_category == 'all' or not current_category %}active{% endif %}">
+                            <i class="fas fa-th-large"></i> All
+                        </a>
+                        {% for category in categories %}
+                        <a href="{{ url_for('all_notices', category=category) }}" 
+                           class="filter-chip {% if current_category == category %}active{% endif %}">
+                            <i class="fas 
+                                {% if category == 'Important' %}fa-exclamation-circle
+                                {% elif category == 'Event' %}fa-calendar-alt
+                                {% elif category == 'Academic' %}fa-book
+                                {% elif category == 'Holiday' %}fa-umbrella-beach
+                                {% elif category == 'Exam' %}fa-pencil-alt
+                                {% elif category == 'Result' %}fa-chart-bar
+                                {% else %}fa-tag{% endif %}">
+                            </i>
+                            {{ category }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Notices Grid -->
+        {% if notices.items %}
+        <div class="row g-4">
+            {% for notice in notices.items %}
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
+                <div class="notice-card {% if notice.priority == 'urgent' %}high-priority{% endif %}">
+                    {% if notice.banner_image %}
+                    <div class="notice-image">
+                        <img src="{{ url_for('static', filename='uploads/banners/' + notice.banner_image) }}" 
+                             alt="{{ notice.title }}">
+                        {% if notice.priority == 'urgent' %}
+                        <span class="notice-badge high">Urgent</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="notice-content">
+                        <div class="notice-meta">
+                            <span class="notice-category {{ notice.category|lower }}">
+                                <i class="fas 
+                                    {% if notice.category == 'Important' %}fa-exclamation-circle
+                                    {% elif notice.category == 'Event' %}fa-calendar-alt
+                                    {% elif notice.category == 'Academic' %}fa-book
+                                    {% elif notice.category == 'Holiday' %}fa-umbrella-beach
+                                    {% elif notice.category == 'Exam' %}fa-pencil-alt
+                                    {% elif notice.category == 'Result' %}fa-chart-bar
+                                    {% else %}fa-bullhorn{% endif %}">
+                                </i>
+                                {{ notice.category }}
+                            </span>
+                            <span class="notice-date">
+                                <i class="far fa-clock"></i>
+                                {{ notice.created_at.strftime('%d %b, %Y') }}
+                            </span>
+                        </div>
+                        
+                        <h3 class="notice-title">
+                            <a href="{{ url_for('notice_detail', id=notice.id) }}">{{ notice.title }}</a>
+                        </h3>
+                        
+                        <p class="notice-excerpt">{{ notice.content[:120] }}{% if notice.content|length > 120 %}...{% endif %}</p>
+                        
+                        <div class="notice-footer">
+                            <div class="notice-stats">
+                                <span>
+                                    <i class="far fa-eye"></i> {{ notice.views }}
+                                </span>
+                                <span>
+                                    <i class="far fa-comment"></i> {{ notice.comments|length }}
+                                </span>
+                                <span>
+                                    <i class="far fa-bookmark"></i> {{ notice.saved_by|length }}
+                                </span>
+                            </div>
+                            
+                            {% if current_user.is_authenticated %}
+                                {% set saved = false %}
+                                {% for saved_notice in current_user.saved_notices %}
+                                    {% if saved_notice.notice_id == notice.id %}
+                                        {% set saved = true %}
+                                    {% endif %}
+                                {% endfor %}
+                                <button class="btn-save-notice {% if saved %}saved{% endif %}" 
+                                        data-notice-id="{{ notice.id }}"
+                                        onclick="saveNotice({{ notice.id }}, this)">
+                                    <i class="fas fa-bookmark"></i>
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if notices.pages > 1 %}
+        <nav aria-label="Page navigation" class="mt-5" data-aos="fade-up">
+            <ul class="pagination justify-content-center">
+                {% if notices.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('all_notices', page=notices.prev_num, category=current_category) }}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="fas fa-chevron-left"></i></span>
+                </li>
+                {% endif %}
+                
+                {% for page_num in notices.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if page_num %}
+                        {% if page_num == notices.page %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ page_num }}</span>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('all_notices', page=page_num, category=current_category) }}">
+                                {{ page_num }}
+                            </a>
+                        </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if notices.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('all_notices', page=notices.next_num, category=current_category) }}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="fas fa-chevron-right"></i></span>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+        
+        {% else %}
+        <div class="text-center py-5" data-aos="fade-up">
+            <div class="empty-state">
+                <i class="fas fa-bullhorn fa-4x text-muted mb-3"></i>
+                <h3>No Notices Found</h3>
+                <p class="text-muted">There are no notices in this category at the moment.</p>
+                <a href="{{ url_for('all_notices') }}" class="btn btn-primary mt-3">
+                    <i class="fas fa-arrow-left me-2"></i>View All Notices
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function saveNotice(noticeId, button) {
+    fetch(`/notice/${noticeId}/save`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            button.classList.toggle('saved');
+            
+            // Show notification
+            showNotification(
+                data.saved ? 'Notice saved successfully!' : 'Notice removed from saved',
+                data.saved ? 'success' : 'info'
+            );
+        }
+    })
+    .catch(error => {
+        showNotification('Error saving notice', 'danger');
+    });
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+    notification.style.zIndex = '9999';
+    notification.innerHTML = `
+        <i class="fas ${type === 'success' ? 'fa-check-circle' : 
+                        type === 'danger' ? 'fa-exclamation-circle' : 
+                        'fa-info-circle'} me-2"></i>
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+</script>
+{% endblock %}

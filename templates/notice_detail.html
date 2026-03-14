@@ -1,0 +1,989 @@
+{% extends "base.html" %}
+
+{% block title %}{{ notice.title }} - Digital Notice Board{% endblock %}
+
+{% block extra_css %}
+<style>
+    .notice-detail-wrapper {
+        padding: 2rem 0;
+        background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+        min-height: calc(100vh - 76px);
+    }
+
+    .notice-header {
+        background: var(--white);
+        border-radius: 24px;
+        padding: 2rem;
+        box-shadow: var(--shadow-lg);
+        margin-bottom: 2rem;
+        border: 1px solid var(--border-color);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .notice-header.urgent {
+        border-left: 6px solid var(--danger-500);
+    }
+
+    .notice-header.high-priority {
+        border-left: 6px solid var(--warning-500);
+    }
+
+    .notice-badge {
+        display: inline-block;
+        padding: 0.35rem 1rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .badge-urgent {
+        background: linear-gradient(135deg, var(--danger-100), var(--danger-200));
+        color: var(--danger-700);
+    }
+
+    .badge-high {
+        background: linear-gradient(135deg, var(--warning-100), var(--warning-200));
+        color: var(--warning-700);
+    }
+
+    .badge-normal {
+        background: linear-gradient(135deg, var(--gray-100), var(--gray-200));
+        color: var(--gray-700);
+    }
+
+    .notice-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        line-height: 1.3;
+    }
+
+    .notice-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        padding: 1.5rem 0;
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: var(--text-secondary);
+    }
+
+    .meta-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: var(--primary-50);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-600);
+        font-size: 1.1rem;
+    }
+
+    .meta-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .meta-label {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .meta-value {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .notice-content {
+        background: var(--white);
+        border-radius: 24px;
+        padding: 2.5rem;
+        box-shadow: var(--shadow-lg);
+        margin-bottom: 2rem;
+        border: 1px solid var(--border-color);
+    }
+
+    .notice-content h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--text-primary);
+    }
+
+    .notice-content p {
+        color: var(--text-secondary);
+        line-height: 1.8;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .notice-content img {
+        max-width: 100%;
+        border-radius: 16px;
+        margin: 1.5rem 0;
+    }
+
+    .attachment-section {
+        background: var(--gray-50);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .attachment-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .attachment-item {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        text-decoration: none;
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+        transition: all 0.3s;
+    }
+
+    .attachment-item:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+        border-color: var(--primary-300);
+    }
+
+    .attachment-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--primary-100);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-600);
+        font-size: 1.2rem;
+    }
+
+    .attachment-details {
+        flex: 1;
+    }
+
+    .attachment-name {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .attachment-size {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        padding: 0.75rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary-action {
+        background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        color: var(--white);
+    }
+
+    .btn-primary-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-secondary-action {
+        background: var(--gray-200);
+        color: var(--text-primary);
+    }
+
+    .btn-secondary-action:hover {
+        background: var(--gray-300);
+        transform: translateY(-2px);
+    }
+
+    .btn-save-action {
+        background: var(--white);
+        color: var(--danger-500);
+        border: 2px solid var(--danger-500);
+    }
+
+    .btn-save-action:hover {
+        background: var(--danger-500);
+        color: var(--white);
+    }
+
+    .btn-save-action.saved {
+        background: var(--danger-500);
+        color: var(--white);
+    }
+
+    .share-section {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .share-title {
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+    }
+
+    .share-buttons {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .share-btn {
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-size: 1.2rem;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .share-btn:hover {
+        transform: translateY(-3px);
+    }
+
+    .share-facebook { background: #1877f2; }
+    .share-twitter { background: #1da1f2; }
+    .share-whatsapp { background: #25d366; }
+    .share-linkedin { background: #0077b5; }
+    .share-email { background: var(--gray-600); }
+
+    .comments-section {
+        background: var(--white);
+        border-radius: 24px;
+        padding: 2rem;
+        box-shadow: var(--shadow-lg);
+        margin-bottom: 2rem;
+        border: 1px solid var(--border-color);
+    }
+
+    .comments-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    .comments-header h4 {
+        margin: 0;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .comment-count {
+        background: var(--primary-100);
+        color: var(--primary-700);
+        padding: 0.2rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+    }
+
+    .comment-form {
+        margin-bottom: 2rem;
+    }
+
+    .comment-input {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .comment-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .comment-input textarea {
+        flex: 1;
+        border: 2px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1rem;
+        resize: none;
+        transition: all 0.3s;
+    }
+
+    .comment-input textarea:focus {
+        border-color: var(--primary-500);
+        box-shadow: 0 0 0 4px var(--primary-100);
+        outline: none;
+    }
+
+    .comment-submit {
+        text-align: right;
+        margin-top: 0.5rem;
+    }
+
+    .comments-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .comment-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1.5rem;
+        background: var(--gray-50);
+        border-radius: 16px;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .comment-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .comment-content {
+        flex: 1;
+    }
+
+    .comment-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .comment-author {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .comment-time {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+
+    .comment-text {
+        color: var(--text-secondary);
+        line-height: 1.6;
+    }
+
+    .comment-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.75rem;
+    }
+
+    .comment-action {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .comment-action:hover {
+        color: var(--primary-600);
+    }
+
+    .related-notices {
+        background: var(--white);
+        border-radius: 24px;
+        padding: 2rem;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+    }
+
+    .related-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .related-card {
+        text-decoration: none;
+        color: var(--text-primary);
+        padding: 1rem;
+        border-radius: 16px;
+        background: var(--gray-50);
+        transition: all 0.3s;
+    }
+
+    .related-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow);
+    }
+
+    .related-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .related-meta {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .qr-code {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--white);
+        padding: 1rem;
+        border-radius: 16px;
+        box-shadow: var(--shadow-xl);
+        text-align: center;
+        z-index: 1000;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .qr-code:hover {
+        transform: scale(1.05);
+    }
+
+    .qr-code img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .qr-code small {
+        display: block;
+        margin-top: 0.5rem;
+        color: var(--text-muted);
+    }
+
+    @media (max-width: 768px) {
+        .notice-title {
+            font-size: 1.5rem;
+        }
+        
+        .notice-meta {
+            gap: 1rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .qr-code {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="notice-detail-wrapper">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('all_notices') }}">Notices</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ notice.title|truncate(30) }}</li>
+            </ol>
+        </nav>
+
+        <!-- Notice Header -->
+        <div class="notice-header {% if notice.priority == 'urgent' %}urgent{% elif notice.priority == 'high' %}high-priority{% endif %}" data-aos="fade-up">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <span class="notice-badge {% if notice.priority == 'urgent' %}badge-urgent{% elif notice.priority == 'high' %}badge-high{% else %}badge-normal{% endif %}">
+                        <i class="fas {% if notice.priority == 'urgent' %}fa-exclamation-circle{% elif notice.priority == 'high' %}fa-flag{% else %}fa-info-circle{% endif %} me-1"></i>
+                        {{ notice.priority|upper }} PRIORITY
+                    </span>
+                </div>
+                <span class="badge bg-secondary">{{ notice.category }}</span>
+            </div>
+
+            <h1 class="notice-title">{{ notice.title }}</h1>
+
+            <div class="notice-meta">
+                <div class="meta-item">
+                    <div class="meta-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="meta-content">
+                        <span class="meta-label">Posted By</span>
+                        <span class="meta-value">{{ notice.author.full_name }}</span>
+                    </div>
+                </div>
+
+                <div class="meta-item">
+                    <div class="meta-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="meta-content">
+                        <span class="meta-label">Posted Date</span>
+                        <span class="meta-value">{{ notice.created_at.strftime('%d %B, %Y') }}</span>
+                    </div>
+                </div>
+
+                <div class="meta-item">
+                    <div class="meta-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="meta-content">
+                        <span class="meta-label">Posted Time</span>
+                        <span class="meta-value">{{ notice.created_at.strftime('%I:%M %p') }}</span>
+                    </div>
+                </div>
+
+                <div class="meta-item">
+                    <div class="meta-icon">
+                        <i class="fas fa-calendar-times"></i>
+                    </div>
+                    <div class="meta-content">
+                        <span class="meta-label">Expiry Date</span>
+                        <span class="meta-value">{{ notice.expiry_date.strftime('%d %B, %Y') if notice.expiry_date else 'No Expiry' }}</span>
+                    </div>
+                </div>
+
+                <div class="meta-item">
+                    <div class="meta-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="meta-content">
+                        <span class="meta-label">Views</span>
+                        <span class="meta-value">{{ notice.views }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                {% if current_user.is_authenticated %}
+                    <button class="btn-action {% if is_saved %}btn-save-action saved{% else %}btn-save-action{% endif %}" 
+                            onclick="toggleSave({{ notice.id }}, this)">
+                        <i class="{% if is_saved %}fas{% else %}far{% endif %} fa-heart"></i>
+                        <span>{% if is_saved %}Saved{% else %}Save Notice{% endif %}</span>
+                    </button>
+                {% endif %}
+
+                <button class="btn-action btn-secondary-action" onclick="printNotice()">
+                    <i class="fas fa-print"></i> Print
+                </button>
+
+                <button class="btn-action btn-secondary-action" onclick="downloadPDF()">
+                    <i class="fas fa-file-pdf"></i> Download PDF
+                </button>
+
+                <a href="{{ url_for('all_notices') }}" class="btn-action btn-secondary-action">
+                    <i class="fas fa-arrow-left"></i> Back to Notices
+                </a>
+            </div>
+
+            <!-- Share Buttons -->
+            <div class="share-section">
+                <h6 class="share-title">Share this notice:</h6>
+                <div class="share-buttons">
+                    <button class="share-btn share-facebook" onclick="share('facebook')">
+                        <i class="fab fa-facebook-f"></i>
+                    </button>
+                    <button class="share-btn share-twitter" onclick="share('twitter')">
+                        <i class="fab fa-twitter"></i>
+                    </button>
+                    <button class="share-btn share-whatsapp" onclick="share('whatsapp')">
+                        <i class="fab fa-whatsapp"></i>
+                    </button>
+                    <button class="share-btn share-linkedin" onclick="share('linkedin')">
+                        <i class="fab fa-linkedin-in"></i>
+                    </button>
+                    <button class="share-btn share-email" onclick="share('email')">
+                        <i class="fas fa-envelope"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notice Content -->
+        <div class="notice-content" data-aos="fade-up" data-aos-delay="100">
+            <h2>Notice Details</h2>
+            
+            {% if notice.banner_image %}
+            <img src="{{ url_for('static', filename='uploads/banners/' + notice.banner_image) }}" alt="{{ notice.title }}" class="img-fluid rounded mb-4">
+            {% endif %}
+
+            <div class="notice-text">
+                {{ notice.content|safe }}
+            </div>
+
+            <!-- Attachments -->
+            {% if notice.attachment %}
+            <div class="attachment-section">
+                <h6><i class="fas fa-paperclip me-2"></i>Attachments</h6>
+                <div class="attachment-list">
+                    <a href="{{ url_for('static', filename='uploads/attachments/' + notice.attachment) }}" class="attachment-item" download>
+                        <div class="attachment-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="attachment-details">
+                            <div class="attachment-name">{{ notice.attachment }}</div>
+                            <div class="attachment-size">Click to download</div>
+                        </div>
+                        <i class="fas fa-download text-muted"></i>
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Comments Section -->
+        <div class="comments-section" data-aos="fade-up" data-aos-delay="200">
+            <div class="comments-header">
+                <h4>
+                    <i class="fas fa-comments"></i>
+                    Comments
+                    <span class="comment-count">{{ comments|length }}</span>
+                </h4>
+            </div>
+
+            {% if current_user.is_authenticated %}
+            <!-- Comment Form -->
+            <div class="comment-form">
+                <form id="commentForm" onsubmit="submitComment(event)">
+                    <div class="comment-input">
+                        <img src="{{ url_for('static', filename='uploads/profiles/' + current_user.profile_pic) }}" 
+                             alt="{{ current_user.full_name }}" class="comment-avatar">
+                        <textarea name="comment" id="commentText" rows="3" placeholder="Write your comment..." required></textarea>
+                    </div>
+                    <div class="comment-submit">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-2"></i>Post Comment
+                        </button>
+                    </div>
+                </form>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Please <a href="{{ url_for('login') }}">login</a> to post comments.
+            </div>
+            {% endif %}
+
+            <!-- Comments List -->
+            <div class="comments-list" id="commentsList">
+                {% for comment in comments %}
+                <div class="comment-item" id="comment-{{ comment.id }}">
+                    <img src="{{ url_for('static', filename='uploads/profiles/' + comment.user.profile_pic) }}" 
+                         alt="{{ comment.user.full_name }}" class="comment-avatar">
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">{{ comment.user.full_name }}</span>
+                            <span class="comment-time">{{ comment.created_at.strftime('%d %b, %Y at %I:%M %p') }}</span>
+                        </div>
+                        <div class="comment-text">
+                            {{ comment.content }}
+                        </div>
+                        {% if current_user.is_authenticated and (current_user.id == comment.user_id or current_user.is_admin) %}
+                        <div class="comment-actions">
+                            <button class="comment-action" onclick="deleteComment({{ comment.id }})">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">No comments yet. Be the first to comment!</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Related Notices -->
+        {% if related_notices %}
+        <div class="related-notices" data-aos="fade-up" data-aos-delay="300">
+            <h4><i class="fas fa-link me-2"></i>Related Notices</h4>
+            <div class="related-grid">
+                {% for related in related_notices %}
+                <a href="{{ url_for('notice_detail', id=related.id) }}" class="related-card">
+                    <div class="related-title">{{ related.title|truncate(50) }}</div>
+                    <div class="related-meta">
+                        <i class="far fa-calendar me-1"></i> {{ related.created_at.strftime('%d %b, %Y') }}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- QR Code -->
+<div class="qr-code" onclick="downloadQR()" title="Download QR Code">
+    <div id="qrcode"></div>
+    <small>Scan to share</small>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script>
+    // Initialize QR Code
+    new QRCode(document.getElementById("qrcode"), {
+        text: window.location.href,
+        width: 100,
+        height: 100,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+
+    // Toggle save notice
+    function toggleSave(noticeId, button) {
+        fetch(`/notice/${noticeId}/save`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const icon = button.querySelector('i');
+            const text = button.querySelector('span');
+            
+            if (data.saved) {
+                button.classList.add('saved');
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                text.textContent = 'Saved';
+                showNotification('Notice saved successfully!', 'success');
+            } else {
+                button.classList.remove('saved');
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                text.textContent = 'Save Notice';
+                showNotification('Notice removed from saved', 'info');
+            }
+        });
+    }
+
+    // Submit comment
+    function submitComment(event) {
+        event.preventDefault();
+        const commentText = document.getElementById('commentText').value;
+        
+        fetch(`/notice/{{ notice.id }}/comment`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ comment: commentText })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Add comment to list
+                const commentsList = document.getElementById('commentsList');
+                const newComment = `
+                    <div class="comment-item" id="comment-${data.comment.id}">
+                        <img src="/static/uploads/profiles/${data.comment.profile_pic}" alt="${data.comment.author}" class="comment-avatar">
+                        <div class="comment-content">
+                            <div class="comment-header">
+                                <span class="comment-author">${data.comment.author}</span>
+                                <span class="comment-time">Just now</span>
+                            </div>
+                            <div class="comment-text">
+                                ${data.comment.content}
+                            </div>
+                            <div class="comment-actions">
+                                <button class="comment-action" onclick="deleteComment(${data.comment.id})">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                if (commentsList.children.length === 1 && commentsList.children[0].classList.contains('text-center')) {
+                    commentsList.innerHTML = newComment;
+                } else {
+                    commentsList.insertAdjacentHTML('afterbegin', newComment);
+                }
+                
+                document.getElementById('commentText').value = '';
+                updateCommentCount();
+                showNotification('Comment posted successfully!', 'success');
+            }
+        });
+    }
+
+    // Delete comment
+    function deleteComment(commentId) {
+        if (confirm('Are you sure you want to delete this comment?')) {
+            fetch(`/comment/${commentId}/delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById(`comment-${commentId}`).remove();
+                    updateCommentCount();
+                    showNotification('Comment deleted', 'info');
+                }
+            });
+        }
+    }
+
+    // Update comment count
+    function updateCommentCount() {
+        const count = document.querySelectorAll('.comment-item').length;
+        document.querySelector('.comment-count').textContent = count;
+    }
+
+    // Share functions
+    function share(platform) {
+        const url = encodeURIComponent(window.location.href);
+        const title = encodeURIComponent("{{ notice.title }}");
+        
+        let shareUrl;
+        switch(platform) {
+            case 'facebook':
+                shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+                break;
+            case 'twitter':
+                shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
+                break;
+            case 'whatsapp':
+                shareUrl = `https://wa.me/?text=${title}%20${url}`;
+                break;
+            case 'linkedin':
+                shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+                break;
+            case 'email':
+                shareUrl = `mailto:?subject=${title}&body=Check out this notice: ${url}`;
+                break;
+        }
+        
+        window.open(shareUrl, '_blank', 'width=600,height=400');
+    }
+
+    // Print notice
+    function printNotice() {
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>{{ notice.title }}</title>
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+                    <style>
+                        body { padding: 2rem; font-family: Arial, sans-serif; }
+                        h1 { color: #333; }
+                        .meta { color: #666; margin: 1rem 0; }
+                        .content { line-height: 1.6; }
+                    </style>
+                </head>
+                <body>
+                    <h1>{{ notice.title }}</h1>
+                    <div class="meta">
+                        Posted by {{ notice.author.full_name }} on {{ notice.created_at.strftime('%d %B, %Y at %I:%M %p') }}
+                    </div>
+                    <hr>
+                    <div class="content">
+                        {{ notice.content|safe }}
+                    </div>
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+    }
+
+    // Download PDF
+    function downloadPDF() {
+        showNotification('Generating PDF...', 'info');
+        setTimeout(() => {
+            window.print();
+        }, 1000);
+    }
+
+    // Download QR Code
+    function downloadQR() {
+        const canvas = document.querySelector('#qrcode canvas');
+        const link = document.createElement('a');
+        link.download = 'notice-qr-{{ notice.id }}.png';
+        link.href = canvas.toDataURL();
+        link.click();
+        showNotification('QR Code downloaded!', 'success');
+    }
+
+    // Show notification
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+        notification.style.zIndex = '9999';
+        notification.innerHTML = `
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 
+                            type === 'danger' ? 'fa-exclamation-circle' : 
+                            'fa-info-circle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+</script>
+{% endblock %}

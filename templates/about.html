@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - Digital Notice Board{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="page-title">About Us</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center">
+                        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">About</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="about-section py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
+                <div class="about-image">
+                    <img src="https://via.placeholder.com/600x400" alt="About NoticeHub" class="img-fluid rounded-3">
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="about-content">
+                    <span class="section-subtitle">Who We Are</span>
+                    <h2 class="about-title">Welcome to NoticeHub</h2>
+                    <p class="about-text">
+                        NoticeHub is a modern digital notice board system designed specifically for educational institutions. 
+                        We provide a seamless platform for colleges and universities to share important announcements, 
+                        event updates, academic notices, and more with their students and staff.
+                    </p>
+                    <p class="about-text">
+                        Our mission is to digitize and streamline the traditional notice board system, making it more 
+                        efficient, eco-friendly, and accessible to everyone. With NoticeHub, gone are the days of 
+                        physical paper notices getting lost or damaged. Everything is just a click away.
+                    </p>
+                    
+                    <div class="about-features mt-4">
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span>Real-time updates and notifications</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span>Easy notice management for administrators</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span>Save and share notices with classmates</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span>Category-wise notice organization</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span>Mobile-friendly responsive design</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Admin Profile Section -->
+<section class="admin-profile-section py-5 bg-light">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-subtitle">Meet Our</span>
+            <h2 class="section-title">Administrator</h2>
+            <p class="section-description">The person behind the system</p>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-6" data-aos="zoom-in">
+                <div class="admin-profile-card">
+                    <div class="admin-profile-image">
+                        <img src="{{ url_for('static', filename='uploads/profiles/' + (admin.profile_pic if admin else 'default.jpg')) }}" 
+                             alt="Admin Profile">
+                    </div>
+                    <div class="admin-profile-info">
+                        <h3>{{ admin.full_name if admin else 'System Administrator' }}</h3>
+                        <p class="admin-role">Lead Administrator</p>
+                        <p class="admin-bio">
+                            With over 10 years of experience in educational technology, our administrator ensures 
+                            that all notices are properly managed and students never miss important updates.
+                        </p>
+                        <div class="admin-contact">
+                            <p><i class="fas fa-envelope"></i> {{ admin.email if admin else 'admin@noticehub.com' }}</p>
+                            <p><i class="fas fa-phone"></i> {{ admin.phone if admin else '+1 234 567 8900' }}</p>
+                        </div>
+                        <div class="admin-social">
+                            <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Project Details Section -->
+<section class="project-details-section py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-subtitle">About</span>
+            <h2 class="section-title">The Project</h2>
+            <p class="section-description">Technical details and features</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up">
+                <div class="project-card">
+                    <div class="project-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h4>Technologies Used</h4>
+                    <ul class="project-list">
+                        <li>Python Flask</li>
+                        <li>SQLAlchemy</li>
+                        <li>Bootstrap 5</li>
+                        <li>JavaScript</li>
+                        <li>SQLite Database</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="project-card">
+                    <div class="project-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h4>Key Features</h4>
+                    <ul class="project-list">
+                        <li>User Authentication</li>
+                        <li>Role-based Access</li>
+                        <li>Notice Management</li>
+                        <li>Save/Share Notices</li>
+                        <li>Contact System</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="project-card">
+                    <div class="project-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h4>Future Plans</h4>
+                    <ul class="project-list">
+                        <li>Mobile App</li>
+                        <li>Email Notifications</li>
+                        <li>SMS Alerts</li>
+                        <li>Analytics Dashboard</li>
+                        <li>API Integration</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 col-6 mb-4 mb-md-0" data-aos="fade-up">
+                <div class="stat-counter">
+                    <h3 class="counter">1500+</h3>
+                    <p>Active Users</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-4 mb-md-0" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-counter">
+                    <h3 class="counter">500+</h3>
+                    <p>Notices Posted</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-counter">
+                    <h3 class="counter">50+</h3>
+                    <p>Departments</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="stat-counter">
+                    <h3 class="counter">100%</h3>
+                    <p>Satisfaction</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

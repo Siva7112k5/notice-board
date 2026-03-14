@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Digital Notice Board{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-wrapper {
+        min-height: calc(100vh - 76px);
+        display: flex;
+        align-items: center;
+        background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%);
+        padding: 3rem 0;
+    }
+    
+    .auth-card {
+        background: var(--white);
+        border-radius: 24px;
+        box-shadow: var(--shadow-xl);
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .auth-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 8px;
+        background: linear-gradient(90deg, var(--primary-500), var(--primary-700));
+    }
+    
+    .auth-header {
+        padding: 2.5rem 2.5rem 1.5rem;
+        text-align: center;
+    }
+    
+    .auth-header h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary-600), var(--primary-800));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+    }
+    
+    .auth-header p {
+        color: var(--text-secondary);
+    }
+    
+    .auth-body {
+        padding: 0 2.5rem 2rem;
+    }
+    
+    .auth-footer {
+        background: var(--gray-50);
+        padding: 1.5rem 2.5rem;
+        text-align: center;
+        border-top: 1px solid var(--border-color);
+    }
+    
+    .auth-footer a {
+        color: var(--primary-600);
+        font-weight: 600;
+        text-decoration: none;
+    }
+    
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+    
+    .form-floating {
+        margin-bottom: 1rem;
+    }
+    
+    .form-floating input {
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        height: 58px;
+        padding: 1rem 0.75rem;
+    }
+    
+    .form-floating input:focus {
+        border-color: var(--primary-500);
+        box-shadow: 0 0 0 3px var(--primary-100);
+    }
+    
+    .form-floating label {
+        padding: 1rem 0.75rem;
+        color: var(--text-secondary);
+    }
+    
+    .btn-login {
+        width: 100%;
+        padding: 0.9rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        border: none;
+        border-radius: 12px;
+        color: var(--white);
+        transition: all 0.3s;
+    }
+    
+    .btn-login:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+    }
+    
+    .password-toggle {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: var(--text-muted);
+        z-index: 10;
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--primary-600);
+        border-color: var(--primary-600);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="auth-card" data-aos="fade-up">
+                    <div class="auth-header">
+                        <h2>Welcome Back! 👋</h2>
+                        <p>Login to access your digital notice board</p>
+                    </div>
+                    
+                    <div class="auth-body">
+                        <form method="POST" action="{{ url_for('login') }}">
+                            {{ form.hidden_tag() }}
+                            
+                            <!-- Email Field -->
+                            <div class="form-floating mb-3">
+                                <input type="email" 
+                                       class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                                       id="email" 
+                                       name="email" 
+                                       placeholder="Email"
+                                       value="{{ form.email.data or '' }}"
+                                       required>
+                                <label for="email">
+                                    <i class="fas fa-envelope me-2"></i>Email Address
+                                </label>
+                                {% if form.email.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.email.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Password Field -->
+                            <div class="form-floating mb-3 position-relative">
+                                <input type="password" 
+                                       class="form-control {% if form.password.errors %}is-invalid{% endif %}" 
+                                       id="password" 
+                                       name="password" 
+                                       placeholder="Password"
+                                       required>
+                                <label for="password">
+                                    <i class="fas fa-lock me-2"></i>Password
+                                </label>
+                                <span class="password-toggle" onclick="togglePassword()">
+                                    <i class="far fa-eye" id="toggleIcon"></i>
+                                </span>
+                                {% if form.password.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.password.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Remember Me Checkbox -->
+                            <div class="form-check mb-3">
+                                {{ form.remember(class="form-check-input") }}
+                                {{ form.remember.label(class="form-check-label") }}
+                            </div>
+                            
+                            <!-- Submit Button -->
+                            {{ form.submit(class="btn btn-login") }}
+                        </form>
+                    </div>
+                    
+                    <div class="auth-footer">
+                        <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const toggleIcon = document.getElementById('toggleIcon');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.classList.remove('fa-eye');
+            toggleIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            toggleIcon.classList.remove('fa-eye-slash');
+            toggleIcon.classList.add('fa-eye');
+        }
+    }
+</script>
+{% endblock %}

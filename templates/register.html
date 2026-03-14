@@ -1,0 +1,457 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Digital Notice Board{% endblock %}
+
+{% block extra_css %}
+<style>
+    .register-wrapper {
+        min-height: calc(100vh - 76px);
+        background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%);
+        padding: 3rem 0;
+    }
+    
+    .register-card {
+        background: var(--white);
+        border-radius: 24px;
+        box-shadow: var(--shadow-xl);
+        overflow: hidden;
+    }
+    
+    .register-header {
+        padding: 2.5rem 2.5rem 1rem;
+        text-align: center;
+    }
+    
+    .register-header h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--success-600), var(--primary-600));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+    }
+    
+    .register-body {
+        padding: 0 2.5rem 2rem;
+    }
+    
+    .register-footer {
+        background: var(--gray-50);
+        padding: 1.5rem 2.5rem;
+        text-align: center;
+        border-top: 1px solid var(--border-color);
+    }
+    
+    .register-footer a {
+        color: var(--primary-600);
+        font-weight: 600;
+        text-decoration: none;
+    }
+    
+    .form-floating {
+        margin-bottom: 1rem;
+    }
+    
+    .form-floating input,
+    .form-floating select {
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        height: 58px;
+    }
+    
+    .form-floating input:focus,
+    .form-floating select:focus {
+        border-color: var(--primary-500);
+        box-shadow: 0 0 0 3px var(--primary-100);
+    }
+    
+    .btn-register {
+        width: 100%;
+        padding: 0.9rem;
+        font-size: 1.1rem;
+        background: linear-gradient(135deg, var(--success-500), var(--primary-600));
+        border: none;
+        border-radius: 12px;
+        color: var(--white);
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    
+    .btn-register:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(34, 197, 94, 0.3);
+    }
+    
+    .password-strength {
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        background: var(--gray-50);
+        border-radius: 8px;
+    }
+    
+    .strength-bar {
+        height: 4px;
+        background: var(--border-color);
+        border-radius: 2px;
+        overflow: hidden;
+    }
+    
+    .strength-bar-fill {
+        height: 100%;
+        width: 0;
+        transition: all 0.3s;
+    }
+    
+    .strength-bar-fill.weak {
+        width: 33.33%;
+        background: var(--danger-500);
+    }
+    
+    .strength-bar-fill.medium {
+        width: 66.66%;
+        background: var(--warning-500);
+    }
+    
+    .strength-bar-fill.strong {
+        width: 100%;
+        background: var(--success-500);
+    }
+    
+    .password-requirements {
+        font-size: 0.85rem;
+        margin: 1rem 0;
+    }
+    
+    .password-requirements li {
+        margin-bottom: 0.25rem;
+    }
+    
+    .password-requirements i {
+        width: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="register-wrapper">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="register-card" data-aos="fade-up">
+                    <div class="register-header">
+                        <h2>Create Student Account 🎓</h2>
+                        <p>Join the digital notice board community</p>
+                    </div>
+                    
+                    <div class="register-body">
+                        <form method="POST" action="{{ url_for('register') }}" enctype="multipart/form-data">
+                            {{ form.hidden_tag() }}
+                            
+                            <div class="row">
+                                <!-- Full Name -->
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        {{ form.full_name(class="form-control", placeholder="Full Name") }}
+                                        {{ form.full_name.label }}
+                                        {% if form.full_name.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.full_name.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Username -->
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        {{ form.username(class="form-control", placeholder="Username") }}
+                                        {{ form.username.label }}
+                                        {% if form.username.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.username.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Email -->
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        {{ form.email(class="form-control", placeholder="Email") }}
+                                        {{ form.email.label }}
+                                        {% if form.email.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.email.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Phone -->
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        {{ form.phone(class="form-control", placeholder="Phone Number") }}
+                                        {{ form.phone.label }}
+                                        {% if form.phone.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.phone.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Roll Number -->
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        {{ form.roll_number(class="form-control", placeholder="Roll Number") }}
+                                        {{ form.roll_number.label }}
+                                        {% if form.roll_number.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.roll_number.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Department -->
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        {{ form.department(class="form-select", placeholder="Department") }}
+                                        {{ form.department.label }}
+                                        {% if form.department.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.department.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Semester -->
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        {{ form.semester(class="form-control", placeholder="Semester", type="number", min="1", max="8") }}
+                                        {{ form.semester.label }}
+                                        {% if form.semester.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.semester.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Batch -->
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        {{ form.batch(class="form-control", placeholder="Batch (e.g., 2024)") }}
+                                        {{ form.batch.label }}
+                                        {% if form.batch.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.batch.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Password -->
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3 position-relative">
+                                        {{ form.password(class="form-control", placeholder="Password", id="password") }}
+                                        {{ form.password.label }}
+                                        <span class="password-toggle" onclick="togglePassword('password', 'toggleIcon1')">
+                                            <i class="far fa-eye" id="toggleIcon1"></i>
+                                        </span>
+                                        {% if form.password.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.password.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <!-- Password Strength Meter -->
+                                    <div class="password-strength">
+                                        <div class="strength-bar">
+                                            <div class="strength-bar-fill" id="strengthBar"></div>
+                                        </div>
+                                        <small class="text-muted" id="strengthText">Enter a password</small>
+                                    </div>
+                                </div>
+                                
+                                <!-- Confirm Password -->
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3 position-relative">
+                                        {{ form.confirm_password(class="form-control", placeholder="Confirm Password", id="confirm_password") }}
+                                        {{ form.confirm_password.label }}
+                                        <span class="password-toggle" onclick="togglePassword('confirm_password', 'toggleIcon2')">
+                                            <i class="far fa-eye" id="toggleIcon2"></i>
+                                        </span>
+                                        {% if form.confirm_password.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.confirm_password.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Password Requirements -->
+                                <div class="col-12">
+                                    <div class="password-requirements">
+                                        <p class="mb-2">Password must contain:</p>
+                                        <ul class="list-unstyled">
+                                            <li id="req-length" class="text-muted">
+                                                <i class="far fa-circle me-2"></i>At least 8 characters
+                                            </li>
+                                            <li id="req-uppercase" class="text-muted">
+                                                <i class="far fa-circle me-2"></i>One uppercase letter
+                                            </li>
+                                            <li id="req-lowercase" class="text-muted">
+                                                <i class="far fa-circle me-2"></i>One lowercase letter
+                                            </li>
+                                            <li id="req-number" class="text-muted">
+                                                <i class="far fa-circle me-2"></i>One number
+                                            </li>
+                                            <li id="req-special" class="text-muted">
+                                                <i class="far fa-circle me-2"></i>One special character
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <!-- Profile Picture -->
+                                <div class="col-12 mb-3">
+                                    <label class="form-label">Profile Picture (Optional)</label>
+                                    {{ form.profile_pic(class="form-control") }}
+                                    {% if form.profile_pic.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.profile_pic.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Submit Button -->
+                                <div class="col-12">
+                                    {{ form.submit(class="btn btn-register") }}
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="register-footer">
+                        <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function togglePassword(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+    
+    function checkPasswordStrength() {
+        const password = document.getElementById('password').value;
+        const strengthBar = document.getElementById('strengthBar');
+        const strengthText = document.getElementById('strengthText');
+        
+        // Check requirements
+        const hasLength = password.length >= 8;
+        const hasUppercase = /[A-Z]/.test(password);
+        const hasLowercase = /[a-z]/.test(password);
+        const hasNumber = /\d/.test(password);
+        const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+        
+        // Update requirement icons
+        updateRequirement('req-length', hasLength);
+        updateRequirement('req-uppercase', hasUppercase);
+        updateRequirement('req-lowercase', hasLowercase);
+        updateRequirement('req-number', hasNumber);
+        updateRequirement('req-special', hasSpecial);
+        
+        // Calculate strength
+        const strength = [hasLength, hasUppercase, hasLowercase, hasNumber, hasSpecial]
+            .filter(Boolean).length;
+        
+        // Update strength bar
+        strengthBar.className = 'strength-bar-fill';
+        if (password.length === 0) {
+            strengthBar.style.width = '0';
+            strengthText.textContent = 'Enter a password';
+        } else if (strength <= 2) {
+            strengthBar.classList.add('weak');
+            strengthText.textContent = 'Weak password';
+        } else if (strength <= 4) {
+            strengthBar.classList.add('medium');
+            strengthText.textContent = 'Medium password';
+        } else {
+            strengthBar.classList.add('strong');
+            strengthText.textContent = 'Strong password';
+        }
+    }
+    
+    function updateRequirement(id, met) {
+        const element = document.getElementById(id);
+        const icon = element.querySelector('i');
+        
+        if (met) {
+            element.classList.remove('text-muted');
+            element.classList.add('text-success');
+            icon.classList.remove('far', 'fa-circle');
+            icon.classList.add('fas', 'fa-check-circle');
+        } else {
+            element.classList.remove('text-success');
+            element.classList.add('text-muted');
+            icon.classList.remove('fas', 'fa-check-circle');
+            icon.classList.add('far', 'fa-circle');
+        }
+    }
+    
+    document.getElementById('password').addEventListener('keyup', checkPasswordStrength);
+    
+    document.getElementById('confirm_password').addEventListener('keyup', function() {
+        const password = document.getElementById('password').value;
+        const confirm = this.value;
+        
+        if (confirm && password !== confirm) {
+            this.classList.add('is-invalid');
+        } else {
+            this.classList.remove('is-invalid');
+        }
+    });
+</script>
+{% endblock %}

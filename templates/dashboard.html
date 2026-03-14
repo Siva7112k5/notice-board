@@ -1,0 +1,949 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard - Digital Notice Board{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-wrapper {
+        padding: 2rem 0;
+        background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+        min-height: calc(100vh - 76px);
+    }
+
+    .welcome-section {
+        background: linear-gradient(135deg, var(--primary-600), var(--primary-800));
+        border-radius: 24px;
+        padding: 2.5rem;
+        color: var(--white);
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-xl);
+    }
+
+    .welcome-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: rotate 60s linear infinite;
+    }
+
+    .welcome-section::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--warning-400), var(--success-400), var(--info-400));
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .welcome-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .welcome-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .welcome-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.95;
+        margin-bottom: 1.5rem;
+    }
+
+    .quick-stats {
+        display: flex;
+        gap: 2rem;
+        margin-top: 1.5rem;
+    }
+
+    .quick-stat {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: rgba(255,255,255,0.1);
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .quick-stat i {
+        font-size: 1.2rem;
+        color: var(--warning-400);
+    }
+
+    .quick-stat span {
+        font-weight: 600;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+    }
+
+    .stat-icon.primary {
+        background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
+        color: var(--primary-600);
+    }
+
+    .stat-icon.success {
+        background: linear-gradient(135deg, var(--success-100), var(--success-200));
+        color: var(--success-600);
+    }
+
+    .stat-icon.warning {
+        background: linear-gradient(135deg, var(--warning-100), var(--warning-200));
+        color: var(--warning-600);
+    }
+
+    .stat-icon.info {
+        background: linear-gradient(135deg, var(--info-100), var(--info-200));
+        color: var(--info-600);
+    }
+
+    .stat-info h3 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--text-primary);
+        line-height: 1.2;
+    }
+
+    .stat-info p {
+        margin: 0.25rem 0 0;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+
+    .section-header h4 {
+        margin: 0;
+        font-weight: 600;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .section-header h4 i {
+        color: var(--primary-500);
+    }
+
+    .view-all-link {
+        color: var(--primary-600);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        transition: all 0.3s;
+    }
+
+    .view-all-link:hover {
+        color: var(--primary-700);
+        gap: 0.5rem;
+    }
+
+    .notices-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .notice-card {
+        background: var(--white);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: all 0.3s;
+        border: 1px solid var(--border-color);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .notice-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .notice-card.urgent {
+        border-left: 4px solid var(--danger-500);
+    }
+
+    .notice-card.high-priority {
+        border-left: 4px solid var(--warning-500);
+    }
+
+    .notice-image {
+        height: 160px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .notice-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s;
+    }
+
+    .notice-card:hover .notice-image img {
+        transform: scale(1.05);
+    }
+
+    .notice-category {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        color: var(--white);
+        padding: 0.25rem 1rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        z-index: 2;
+    }
+
+    .notice-content {
+        padding: 1.5rem;
+        flex: 1;
+    }
+
+    .notice-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: var(--text-primary);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .notice-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .notice-meta i {
+        margin-right: 0.25rem;
+    }
+
+    .notice-description {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .notice-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.5rem;
+        background: var(--gray-50);
+        border-top: 1px solid var(--border-color);
+    }
+
+    .btn-view {
+        background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        color: var(--white);
+        padding: 0.4rem 1.2rem;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .btn-view:hover {
+        transform: translateX(5px);
+        box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-save {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 1.1rem;
+    }
+
+    .btn-save:hover,
+    .btn-save.saved {
+        color: var(--danger-500);
+        transform: scale(1.1);
+    }
+
+    .categories-section {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-lg);
+        margin-bottom: 2rem;
+    }
+
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .category-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        background: var(--gray-50);
+        border-radius: 12px;
+        color: var(--text-primary);
+        text-decoration: none;
+        transition: all 0.3s;
+        gap: 0.75rem;
+    }
+
+    .category-item:hover {
+        background: var(--primary-50);
+        color: var(--primary-600);
+        transform: translateY(-2px);
+    }
+
+    .category-icon {
+        width: 35px;
+        height: 35px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+
+    .category-icon.academic { background: var(--primary-100); color: var(--primary-600); }
+    .category-icon.event { background: var(--success-100); color: var(--success-600); }
+    .category-icon.important { background: var(--danger-100); color: var(--danger-600); }
+    .category-icon.exam { background: var(--warning-100); color: var(--warning-600); }
+    .category-icon.holiday { background: var(--info-100); color: var(--info-600); }
+
+    .category-name {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .calendar-widget {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-lg);
+        height: 100%;
+    }
+
+    .calendar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+
+    .calendar-header h6 {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .calendar-weekdays {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        text-align: center;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        margin-bottom: 0.5rem;
+    }
+
+    .calendar-days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.25rem;
+    }
+
+    .calendar-day {
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .calendar-day:hover {
+        background: var(--primary-50);
+        color: var(--primary-600);
+    }
+
+    .calendar-day.today {
+        background: var(--primary-500);
+        color: var(--white);
+    }
+
+    .calendar-day.has-event {
+        position: relative;
+        font-weight: 600;
+    }
+
+    .calendar-day.has-event::after {
+        content: '';
+        position: absolute;
+        bottom: 2px;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--danger-500);
+    }
+
+    .upcoming-events {
+        margin-top: 1rem;
+    }
+
+    .event-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .event-item:last-child {
+        border-bottom: none;
+    }
+
+    .event-date {
+        width: 45px;
+        height: 45px;
+        background: var(--primary-50);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        color: var(--primary-600);
+    }
+
+    .event-date .day {
+        font-size: 1.2rem;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .event-date .month {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+    }
+
+    .event-details {
+        flex: 1;
+    }
+
+    .event-title {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .event-time {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    @media (max-width: 768px) {
+        .welcome-section {
+            padding: 1.5rem;
+        }
+        
+        .welcome-title {
+            font-size: 1.5rem;
+        }
+        
+        .quick-stats {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .notices-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .categories-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="welcome-section" data-aos="fade-up">
+            <div class="welcome-content">
+                <h1 class="welcome-title">Welcome back, {{ current_user.full_name }}! 👋</h1>
+                <p class="welcome-subtitle">Here's what's happening in your college today</p>
+                
+                <div class="quick-stats">
+                    <div class="quick-stat">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>{{ now.strftime('%A, %B %d, %Y') }}</span>
+                    </div>
+                    <div class="quick-stat">
+                        <i class="fas fa-bell"></i>
+                        <span>{{ unread_notifications }} unread notifications</span>
+                    </div>
+                    <div class="quick-stat">
+                        <i class="fas fa-bookmark"></i>
+                        <span>{{ saved_count }} saved notices</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-icon primary">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ total_notices }}</h3>
+                    <p>Total Notices</p>
+                </div>
+            </div>
+
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-icon success">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ upcoming_events }}</h3>
+                    <p>Upcoming Events</p>
+                </div>
+            </div>
+
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="stat-icon warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ urgent_notices }}</h3>
+                    <p>Urgent Notices</p>
+                </div>
+            </div>
+
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="stat-icon info">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ total_views }}</h3>
+                    <p>Total Views</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Main Content - Notices -->
+            <div class="col-lg-8">
+                <!-- Featured Notices -->
+                <div class="section-header">
+                    <h4><i class="fas fa-star"></i> Featured Notices</h4>
+                    <a href="{{ url_for('all_notices') }}" class="view-all-link">
+                        View All <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="notices-grid">
+                    {% for notice in featured_notices %}
+                    <div class="notice-card {% if notice.priority == 'urgent' %}urgent{% elif notice.priority == 'high' %}high-priority{% endif %}" data-aos="fade-up">
+                        {% if notice.banner_image %}
+                        <div class="notice-image">
+                            <img src="{{ url_for('static', filename='uploads/banners/' + notice.banner_image) }}" alt="{{ notice.title }}">
+                            <span class="notice-category">{{ notice.category }}</span>
+                        </div>
+                        {% else %}
+                        <div class="notice-image" style="background: linear-gradient(135deg, var(--primary-100), var(--primary-200)); display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-bullhorn fa-3x" style="color: var(--primary-500);"></i>
+                            <span class="notice-category">{{ notice.category }}</span>
+                        </div>
+                        {% endif %}
+
+                        <div class="notice-content">
+                            <h5 class="notice-title">{{ notice.title }}</h5>
+                            <div class="notice-meta">
+                                <span><i class="far fa-calendar"></i> {{ notice.created_at.strftime('%d %b, %Y') }}</span>
+                                <span><i class="far fa-eye"></i> {{ notice.views }}</span>
+                            </div>
+                            <p class="notice-description">{{ notice.content[:150] }}{% if notice.content|length > 150 %}...{% endif %}</p>
+                        </div>
+
+                        <div class="notice-footer">
+                            <a href="{{ url_for('notice_detail', id=notice.id) }}" class="btn-view">
+                                Read More <i class="fas fa-arrow-right ms-1"></i>
+                            </a>
+                            <button class="btn-save {% if notice.id in saved_notice_ids %}saved{% endif %}" 
+                                    onclick="saveNotice({{ notice.id }}, this)" 
+                                    title="{% if notice.id in saved_notice_ids %}Remove from saved{% else %}Save notice{% endif %}">
+                                <i class="{% if notice.id in saved_notice_ids %}fas{% else %}far{% endif %} fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5 col-12">
+                        <i class="fas fa-bullhorn fa-3x text-muted mb-3"></i>
+                        <h5>No featured notices</h5>
+                        <p class="text-muted">Check back later for updates</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Recent Notices -->
+                <div class="section-header mt-4">
+                    <h4><i class="fas fa-clock"></i> Recent Notices</h4>
+                    <a href="{{ url_for('all_notices') }}" class="view-all-link">
+                        View All <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="notices-grid">
+                    {% for notice in recent_notices %}
+                    <div class="notice-card {% if notice.priority == 'urgent' %}urgent{% elif notice.priority == 'high' %}high-priority{% endif %}" data-aos="fade-up">
+                        <div class="notice-content">
+                            <h5 class="notice-title">{{ notice.title }}</h5>
+                            <div class="notice-meta">
+                                <span><i class="far fa-calendar"></i> {{ notice.created_at.strftime('%d %b, %Y') }}</span>
+                                <span><i class="far fa-eye"></i> {{ notice.views }}</span>
+                            </div>
+                            <p class="notice-description">{{ notice.content[:100] }}{% if notice.content|length > 100 %}...{% endif %}</p>
+                        </div>
+
+                        <div class="notice-footer">
+                            <a href="{{ url_for('notice_detail', id=notice.id) }}" class="btn-view">
+                                Read More <i class="fas fa-arrow-right ms-1"></i>
+                            </a>
+                            <button class="btn-save {% if notice.id in saved_notice_ids %}saved{% endif %}" 
+                                    onclick="saveNotice({{ notice.id }}, this)" 
+                                    title="{% if notice.id in saved_notice_ids %}Remove from saved{% else %}Save notice{% endif %}">
+                                <i class="{% if notice.id in saved_notice_ids %}fas{% else %}far{% endif %} fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5 col-12">
+                        <i class="fas fa-bullhorn fa-3x text-muted mb-3"></i>
+                        <h5>No recent notices</h5>
+                        <p class="text-muted">Check back later for updates</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Categories -->
+                <div class="categories-section" data-aos="fade-left">
+                    <h6 class="mb-3"><i class="fas fa-tags me-2"></i>Browse Categories</h6>
+                    <div class="categories-grid">
+                        <a href="{{ url_for('all_notices', category='Academic') }}" class="category-item">
+                            <div class="category-icon academic">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <span class="category-name">Academic</span>
+                        </a>
+                        <a href="{{ url_for('all_notices', category='Event') }}" class="category-item">
+                            <div class="category-icon event">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <span class="category-name">Events</span>
+                        </a>
+                        <a href="{{ url_for('all_notices', category='Important') }}" class="category-item">
+                            <div class="category-icon important">
+                                <i class="fas fa-exclamation"></i>
+                            </div>
+                            <span class="category-name">Important</span>
+                        </a>
+                        <a href="{{ url_for('all_notices', category='Exam') }}" class="category-item">
+                            <div class="category-icon exam">
+                                <i class="fas fa-pencil-alt"></i>
+                            </div>
+                            <span class="category-name">Exams</span>
+                        </a>
+                        <a href="{{ url_for('all_notices', category='Holiday') }}" class="category-item">
+                            <div class="category-icon holiday">
+                                <i class="fas fa-umbrella-beach"></i>
+                            </div>
+                            <span class="category-name">Holidays</span>
+                        </a>
+                        <a href="{{ url_for('all_notices', category='Result') }}" class="category-item">
+                            <div class="category-icon academic">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <span class="category-name">Results</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Calendar Widget -->
+                <div class="calendar-widget" data-aos="fade-left" data-aos-delay="100">
+                    <div class="calendar-header">
+                        <h6><i class="fas fa-calendar-alt me-2"></i>{{ now.strftime('%B %Y') }}</h6>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="prevMonth()">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-primary" onclick="nextMonth()">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="calendar-weekdays">
+                        <span>Mon</span>
+                        <span>Tue</span>
+                        <span>Wed</span>
+                        <span>Thu</span>
+                        <span>Fri</span>
+                        <span>Sat</span>
+                        <span>Sun</span>
+                    </div>
+
+                    <div class="calendar-days" id="calendarDays">
+                        <!-- Generated by JavaScript -->
+                    </div>
+
+                    <div class="upcoming-events mt-3">
+                        <h6 class="mb-3">Upcoming Events</h6>
+                        {% for event in upcoming_events_list %}
+                        <div class="event-item">
+                            <div class="event-date">
+                                <span class="day">{{ event.date.strftime('%d') }}</span>
+                                <span class="month">{{ event.date.strftime('%b') }}</span>
+                            </div>
+                            <div class="event-details">
+                                <div class="event-title">{{ event.title }}</div>
+                                <div class="event-time">
+                                    <i class="far fa-clock"></i>
+                                    {{ event.time }}
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <p class="text-muted small text-center">No upcoming events</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="categories-section mt-4" data-aos="fade-left" data-aos-delay="200">
+                    <h6 class="mb-3"><i class="fas fa-link me-2"></i>Quick Links</h6>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('profile') }}" class="btn btn-outline-primary text-start">
+                            <i class="fas fa-user me-2"></i>My Profile
+                        </a>
+                        <a href="{{ url_for('profile') }}#saved" class="btn btn-outline-primary text-start">
+                            <i class="fas fa-bookmark me-2"></i>Saved Notices
+                        </a>
+                        <a href="{{ url_for('contact') }}" class="btn btn-outline-primary text-start">
+                            <i class="fas fa-envelope me-2"></i>Contact Support
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Calendar generation
+    function generateCalendar() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        
+        let firstDayIndex = firstDay.getDay();
+        // Adjust for Monday as first day
+        firstDayIndex = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
+        
+        const lastDate = lastDay.getDate();
+        const prevLastDay = new Date(year, month, 0);
+        const prevLastDate = prevLastDay.getDate();
+        
+        const days = [];
+        
+        // Previous month days
+        for (let i = firstDayIndex; i > 0; i--) {
+            days.push({
+                day: prevLastDate - i + 1,
+                currentMonth: false
+            });
+        }
+        
+        // Current month days
+        for (let i = 1; i <= lastDate; i++) {
+            days.push({
+                day: i,
+                currentMonth: true,
+                today: i === now.getDate() && month === now.getMonth() && year === now.getFullYear(),
+                hasEvent: Math.random() > 0.7 // Random events for demo
+            });
+        }
+        
+        // Next month days
+        const remainingDays = 42 - days.length;
+        for (let i = 1; i <= remainingDays; i++) {
+            days.push({
+                day: i,
+                currentMonth: false
+            });
+        }
+        
+        // Render calendar
+        const calendarEl = document.getElementById('calendarDays');
+        calendarEl.innerHTML = days.map(day => `
+            <div class="calendar-day ${day.today ? 'today' : ''} ${day.hasEvent ? 'has-event' : ''}" 
+                 style="${!day.currentMonth ? 'opacity: 0.3;' : ''}">
+                ${day.day}
+            </div>
+        `).join('');
+    }
+
+    // Month navigation
+    function prevMonth() {
+        showNotification('Loading previous month...', 'info');
+        generateCalendar();
+    }
+
+    function nextMonth() {
+        showNotification('Loading next month...', 'info');
+        generateCalendar();
+    }
+
+    // Save notice function
+    function saveNotice(noticeId, button) {
+        fetch(`/notice/${noticeId}/save`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.saved) {
+                button.classList.add('saved');
+                button.querySelector('i').classList.remove('far');
+                button.querySelector('i').classList.add('fas');
+                button.title = 'Remove from saved';
+                showNotification('Notice saved successfully!', 'success');
+            } else {
+                button.classList.remove('saved');
+                button.querySelector('i').classList.remove('fas');
+                button.querySelector('i').classList.add('far');
+                button.title = 'Save notice';
+                showNotification('Notice removed from saved', 'info');
+            }
+        })
+        .catch(error => {
+            showNotification('Error saving notice', 'danger');
+        });
+    }
+
+    // Show notification
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+        notification.style.zIndex = '9999';
+        notification.innerHTML = `
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 
+                            type === 'danger' ? 'fa-exclamation-circle' : 
+                            'fa-info-circle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+
+    // Initialize calendar on load
+    document.addEventListener('DOMContentLoaded', generateCalendar);
+</script>
+{% endblock %}

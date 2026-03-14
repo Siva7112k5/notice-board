@@ -1,0 +1,1281 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Digital Notice Board{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ==========================================================================
+       Hero Section - Brown/Gold Theme
+       ========================================================================== */
+    .hero-section {
+        position: relative;
+        background: linear-gradient(135deg, var(--primary-800), var(--primary-950));
+        padding: 6rem 0;
+        overflow: hidden;
+        min-height: 85vh;
+        display: flex;
+        align-items: center;
+    }
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: 
+            radial-gradient(circle at 30% 50%, rgba(229, 149, 40, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 70% 80%, rgba(229, 149, 40, 0.15) 0%, transparent 50%);
+        z-index: 1;
+    }
+
+    .hero-section::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 80%;
+        height: 200%;
+        background: radial-gradient(circle at center, rgba(229, 149, 40, 0.1) 0%, transparent 70%);
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    .hero-container {
+        position: relative;
+        z-index: 10;
+    }
+
+    .hero-content {
+        max-width: 600px;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .hero-badge span {
+        color: var(--warning-400);
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    .hero-badge i {
+        color: var(--warning-400);
+        font-size: 0.9rem;
+    }
+
+    .hero-title {
+        font-size: 3.75rem;
+        font-weight: 700;
+        line-height: 1.1;
+        color: var(--white);
+        margin-bottom: 1.5rem;
+        letter-spacing: -0.02em;
+    }
+
+    .hero-title-light {
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.9);
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .hero-title-highlight {
+        position: relative;
+        display: inline-block;
+        color: var(--warning-400);
+    }
+
+    .hero-title-highlight::after {
+        content: '';
+        position: absolute;
+        bottom: 5px;
+        left: 0;
+        width: 100%;
+        height: 8px;
+        background: rgba(229, 149, 40, 0.3);
+        border-radius: 4px;
+        z-index: -1;
+    }
+
+    .hero-description {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 2.5rem;
+        line-height: 1.6;
+        max-width: 550px;
+    }
+
+    .hero-actions {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 3rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary-modern {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: var(--gradient-gold);
+        color: var(--white);
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary-modern:hover {
+        background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        transform: translateY(-2px);
+        box-shadow: 0 20px 30px -10px rgba(229, 149, 40, 0.3);
+    }
+
+    .btn-outline-modern {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: transparent;
+        color: var(--white);
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1.5px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .btn-outline-modern:hover {
+        border-color: var(--warning-400);
+        background: rgba(229, 149, 40, 0.1);
+        transform: translateY(-2px);
+    }
+
+    /* Hero Stats */
+    .hero-stats-grid {
+        display: flex;
+        gap: 2.5rem;
+        flex-wrap: wrap;
+    }
+
+    .stat-item-modern {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--warning-400);
+        line-height: 1;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.6);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Hero Image */
+    .hero-image-wrapper {
+        position: relative;
+        z-index: 5;
+    }
+
+    .hero-image-main {
+        position: relative;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 30px 40px -20px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-image-main img {
+        width: 100%;
+        height: auto;
+        display: block;
+        transition: transform 0.6s ease;
+    }
+
+    .hero-image-main:hover img {
+        transform: scale(1.02);
+    }
+
+    .hero-image-card {
+        position: absolute;
+        bottom: -20px;
+        left: -20px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 1rem 1.5rem;
+        border-radius: 16px;
+        box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .hero-image-card i {
+        font-size: 2rem;
+        color: var(--warning-400);
+    }
+
+    .hero-card-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .hero-card-label {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .hero-card-value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--primary-800);
+    }
+
+    /* ==========================================================================
+       Section Headers - Brown/Gold Theme
+       ========================================================================== */
+    .section-header-modern {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .section-tag {
+        display: inline-block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--white);
+        background: var(--gradient-gold);
+        padding: 0.5rem 1.5rem;
+        border-radius: 100px;
+        margin-bottom: 1rem;
+        box-shadow: 0 5px 15px rgba(229, 149, 40, 0.3);
+    }
+
+    .section-heading {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: var(--gradient-gold);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .section-heading-light {
+        color: var(--white);
+        background: none;
+        -webkit-text-fill-color: var(--white);
+    }
+
+    .section-subheading {
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .section-subheading-light {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* ==========================================================================
+       Featured Notices Cards - Brown/Gold Theme
+       ========================================================================== */
+    .featured-section {
+        padding: 6rem 0;
+        background: var(--gray-50);
+    }
+
+    .notice-card-modern {
+        background: var(--white);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
+        transition: all 0.3s ease;
+        height: 100%;
+        border: 1px solid var(--border-color);
+    }
+
+    .notice-card-modern:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-2xl);
+        border-color: var(--warning-200);
+    }
+
+    .notice-image-modern {
+        position: relative;
+        height: 220px;
+        overflow: hidden;
+    }
+
+    .notice-image-modern img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .notice-card-modern:hover .notice-image-modern img {
+        transform: scale(1.05);
+    }
+
+    .notice-category-modern {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        padding: 0.4rem 1.2rem;
+        border-radius: 100px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(5px);
+        box-shadow: var(--shadow);
+    }
+
+    .notice-category-modern.important {
+        background: var(--danger-500);
+        color: var(--white);
+    }
+
+    .notice-category-modern.event {
+        background: var(--success-500);
+        color: var(--white);
+    }
+
+    .notice-category-modern.academic {
+        background: var(--primary-500);
+        color: var(--white);
+    }
+
+    .notice-category-modern.holiday {
+        background: var(--warning-500);
+        color: var(--white);
+    }
+
+    .notice-content-modern {
+        padding: 1.8rem;
+    }
+
+    .notice-meta-modern {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .notice-date-modern {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .notice-date-modern i {
+        color: var(--warning-400);
+    }
+
+    .notice-title-modern {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.8rem;
+        line-height: 1.4;
+    }
+
+    .notice-title-modern a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .notice-title-modern a:hover {
+        color: var(--primary-500);
+    }
+
+    .notice-excerpt-modern {
+        color: var(--text-secondary);
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+        font-size: 0.95rem;
+    }
+
+    .notice-link-modern {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--primary-500);
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 0.95rem;
+        transition: gap 0.3s ease;
+    }
+
+    .notice-link-modern:hover {
+        gap: 0.8rem;
+        color: var(--primary-600);
+    }
+
+    /* ==========================================================================
+       Important Notices - Brown/Gold Theme
+       ========================================================================== */
+    .important-section-modern {
+        padding: 6rem 0;
+        background: var(--white);
+    }
+
+    .important-item-modern {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.5rem;
+        padding: 1.5rem;
+        background: var(--gray-50);
+        border-radius: 16px;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+        border-left: 4px solid var(--danger-500);
+    }
+
+    .important-item-modern:hover {
+        background: var(--white);
+        box-shadow: var(--shadow-lg);
+        transform: translateX(10px);
+    }
+
+    .important-icon-modern {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: var(--danger-50);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--danger-500);
+        font-size: 1.4rem;
+        flex-shrink: 0;
+    }
+
+    .important-content-modern {
+        flex: 1;
+    }
+
+    .important-content-modern h4 {
+        margin: 0 0 0.5rem;
+        font-size: 1.15rem;
+        font-weight: 600;
+    }
+
+    .important-content-modern h4 a {
+        color: var(--text-primary);
+        text-decoration: none;
+    }
+
+    .important-content-modern h4 a:hover {
+        color: var(--danger-500);
+    }
+
+    .important-content-modern p {
+        color: var(--text-secondary);
+        margin: 0 0 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .important-date-modern {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .important-date-modern i {
+        color: var(--warning-400);
+    }
+
+    /* ==========================================================================
+       Categories - Brown/Gold Theme
+       ========================================================================== */
+    .categories-section-modern {
+        padding: 6rem 0;
+        background: var(--gray-50);
+    }
+
+    .category-card-modern {
+        display: block;
+        padding: 2rem;
+        background: var(--white);
+        border-radius: 20px;
+        text-align: center;
+        text-decoration: none;
+        box-shadow: var(--shadow-lg);
+        transition: all 0.3s ease;
+        border: 1px solid var(--border-color);
+        height: 100%;
+    }
+
+    .category-card-modern:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-2xl);
+    }
+
+    .category-card-modern.important:hover {
+        background: linear-gradient(135deg, var(--danger-50), var(--white));
+    }
+    .category-card-modern.event:hover {
+        background: linear-gradient(135deg, var(--success-50), var(--white));
+    }
+    .category-card-modern.academic:hover {
+        background: linear-gradient(135deg, var(--primary-50), var(--white));
+    }
+    .category-card-modern.holiday:hover {
+        background: linear-gradient(135deg, var(--warning-50), var(--white));
+    }
+
+    .category-icon-modern {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin: 0 auto 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .category-card-modern.important .category-icon-modern {
+        background: var(--danger-100);
+        color: var(--danger-500);
+    }
+    .category-card-modern.event .category-icon-modern {
+        background: var(--success-100);
+        color: var(--success-500);
+    }
+    .category-card-modern.academic .category-icon-modern {
+        background: var(--primary-100);
+        color: var(--primary-500);
+    }
+    .category-card-modern.holiday .category-icon-modern {
+        background: var(--warning-100);
+        color: var(--warning-500);
+    }
+
+    .category-card-modern:hover .category-icon-modern {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .category-card-modern h4 {
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+
+    .category-card-modern p {
+        color: var(--text-secondary);
+        margin: 0;
+        font-size: 0.9rem;
+    }
+
+    /* ==========================================================================
+       Recent Notices - Brown/Gold Theme
+       ========================================================================== */
+    .recent-section-modern {
+        padding: 6rem 0;
+        background: var(--white);
+    }
+
+    .recent-card-modern {
+        background: var(--gray-50);
+        border-radius: 16px;
+        padding: 1.8rem;
+        transition: all 0.3s ease;
+        height: 100%;
+        border: 1px solid var(--border-color);
+    }
+
+    .recent-card-modern:hover {
+        background: var(--white);
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-5px);
+    }
+
+    .recent-header-modern {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+
+    .badge-modern {
+        padding: 0.4rem 1.2rem;
+        border-radius: 100px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .badge-modern.important {
+        background: var(--danger-100);
+        color: var(--danger-500);
+    }
+
+    .badge-modern.event {
+        background: var(--success-100);
+        color: var(--success-500);
+    }
+
+    .badge-modern.academic {
+        background: var(--primary-100);
+        color: var(--primary-500);
+    }
+
+    .badge-modern.holiday {
+        background: var(--warning-100);
+        color: var(--warning-500);
+    }
+
+    .badge-modern.urgent {
+        background: var(--danger-500);
+        color: var(--white);
+    }
+
+    .recent-title-modern {
+        font-size: 1.15rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+    }
+
+    .recent-title-modern a {
+        color: var(--text-primary);
+        text-decoration: none;
+    }
+
+    .recent-title-modern a:hover {
+        color: var(--primary-500);
+    }
+
+    .recent-excerpt-modern {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+
+    .recent-footer-modern {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .recent-category-modern {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .recent-category-modern i {
+        color: var(--warning-400);
+    }
+
+    .recent-category-modern .category-badge {
+        padding: 0.2rem 0.8rem;
+        border-radius: 100px;
+        font-weight: 500;
+    }
+
+    .recent-category-modern .category-badge.important {
+        background: var(--danger-50);
+        color: var(--danger-500);
+    }
+
+    .recent-category-modern .category-badge.event {
+        background: var(--success-50);
+        color: var(--success-500);
+    }
+
+    .recent-category-modern .category-badge.academic {
+        background: var(--primary-50);
+        color: var(--primary-500);
+    }
+
+    .recent-category-modern .category-badge.holiday {
+        background: var(--warning-50);
+        color: var(--warning-500);
+    }
+
+    .recent-views-modern {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    /* ==========================================================================
+       CTA Section - Brown/Gold Theme
+       ========================================================================== */
+    .cta-section-modern {
+        padding: 6rem 0;
+        background: linear-gradient(135deg, var(--primary-800), var(--primary-950));
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-section-modern::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: 
+            radial-gradient(circle at 30% 50%, rgba(229, 149, 40, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 70% 80%, rgba(229, 149, 40, 0.15) 0%, transparent 50%);
+    }
+
+    .cta-section-modern::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 80%;
+        height: 200%;
+        background: radial-gradient(circle at center, rgba(229, 149, 40, 0.1) 0%, transparent 70%);
+        animation: rotate 60s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .cta-content-modern {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        color: var(--white);
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .cta-content-modern h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .cta-content-modern p {
+        font-size: 1.2rem;
+        opacity: 0.8;
+        margin-bottom: 2rem;
+    }
+
+    .btn-cta-modern {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: var(--gradient-gold);
+        color: var(--white);
+        padding: 1.2rem 2.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-cta-modern:hover {
+        background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        transform: translateY(-3px);
+        box-shadow: 0 25px 35px -15px rgba(229, 149, 40, 0.4);
+    }
+
+    /* ==========================================================================
+       Utility Classes - Brown/Gold Theme
+       ========================================================================== */
+    .text-gradient-gold {
+        background: var(--gradient-gold);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .bg-soft-gold {
+        background: var(--warning-50);
+    }
+
+    .bg-soft-earth {
+        background: var(--secondary-50);
+    }
+
+    .border-gradient-gold {
+        border: 2px solid transparent;
+        border-image: var(--gradient-gold);
+        border-image-slice: 1;
+    }
+
+    /* ==========================================================================
+       Responsive Design
+       ========================================================================== */
+    @media (max-width: 1200px) {
+        .hero-title {
+            font-size: 3.25rem;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .hero-section {
+            padding: 4rem 0;
+            min-height: auto;
+        }
+        
+        .hero-content {
+            text-align: center;
+            max-width: 100%;
+            margin-bottom: 3rem;
+        }
+        
+        .hero-description {
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .hero-actions {
+            justify-content: center;
+        }
+        
+        .hero-stats-grid {
+            justify-content: center;
+        }
+        
+        .hero-image-card {
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -20px;
+        }
+        
+        .section-heading {
+            font-size: 2.2rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+        
+        .hero-title-light {
+            font-size: 2rem;
+        }
+        
+        .hero-description {
+            font-size: 1.1rem;
+        }
+        
+        .hero-actions {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .hero-actions .btn-primary-modern,
+        .hero-actions .btn-outline-modern {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .stat-number {
+            font-size: 1.6rem;
+        }
+        
+        .section-heading {
+            font-size: 2rem;
+        }
+        
+        .cta-content-modern h2 {
+            font-size: 2rem;
+        }
+        
+        .cta-content-modern p {
+            font-size: 1rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .hero-title {
+            font-size: 2rem;
+        }
+        
+        .hero-title-light {
+            font-size: 1.6rem;
+        }
+        
+        .hero-stats-grid {
+            gap: 1.5rem;
+        }
+        
+        .stat-number {
+            font-size: 1.3rem;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+        }
+        
+        .hero-image-card {
+            padding: 0.75rem 1rem;
+        }
+        
+        .hero-image-card i {
+            font-size: 1.5rem;
+        }
+        
+        .hero-card-value {
+            font-size: 0.9rem;
+        }
+        
+        .section-heading {
+            font-size: 1.75rem;
+        }
+        
+        .section-tag {
+            font-size: 0.75rem;
+        }
+    }
+
+    /* ==========================================================================
+       Animation Keyframes
+       ========================================================================== */
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-up {
+        animation: fadeUp 0.6s ease forwards;
+    }
+
+    .delay-1 {
+        animation-delay: 0.1s;
+    }
+
+    .delay-2 {
+        animation-delay: 0.2s;
+    }
+
+    .delay-3 {
+        animation-delay: 0.3s;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Modern Hero Section -->
+<section class="hero-section">
+    <div class="container hero-container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <div class="hero-badge animate-fade-up">
+                        <i class="fas fa-bolt"></i>
+                        <span>Latest Updates</span>
+                    </div>
+                    
+                    <h1 class="hero-title animate-fade-up delay-1">
+                        <span class="hero-title-light">Welcome to</span>
+                        <span class="hero-title-highlight">NoticeHub</span>
+                    </h1>
+                    
+                    <p class="hero-description animate-fade-up delay-2">
+                        Stay informed with real-time announcements, events, and important updates from your institution. Never miss an important notice again.
+                    </p>
+                    
+                    <div class="hero-actions animate-fade-up delay-3">
+                        <a href="{{ url_for('all_notices') }}" class="btn-primary-modern">
+                            <i class="fas fa-bell"></i>
+                            View Latest Notices
+                        </a>
+                        <a href="#categories" class="btn-outline-modern">
+                            <i class="fas fa-calendar-alt"></i>
+                            Browse Categories
+                        </a>
+                    </div>
+                    
+                    <div class="hero-stats-grid">
+                        <div class="stat-item-modern">
+                            <span class="stat-number">{{ total_notices|default(500) }}+</span>
+                            <span class="stat-label">Active Notices</span>
+                        </div>
+                        <div class="stat-item-modern">
+                            <span class="stat-number">24/7</span>
+                            <span class="stat-label">Updates</span>
+                        </div>
+                        <div class="stat-item-modern">
+                            <span class="stat-number">{{ total_views|default('10k') }}+</span>
+                            <span class="stat-label">Daily Views</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="hero-image-wrapper animate-fade-up delay-2">
+                    <div class="hero-image-main">
+                        <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                             alt="University campus" 
+                             class="img-fluid">
+                    </div>
+                    
+                    <div class="hero-image-card">
+                        <i class="fas fa-bullhorn"></i>
+                        <div class="hero-card-content">
+                            <span class="hero-card-label">Latest Notice</span>
+                            <span class="hero-card-value">Spring Semester Updates</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Notices Section -->
+{% if featured_notices %}
+<section class="featured-section">
+    <div class="container">
+        <div class="section-header-modern">
+            <span class="section-tag">Featured</span>
+            <h2 class="section-heading">Important Announcements</h2>
+            <p class="section-subheading">Stay updated with the latest happenings around campus</p>
+        </div>
+        
+        <div class="row g-4">
+            {% for notice in featured_notices %}
+            <div class="col-md-4">
+                <div class="notice-card-modern">
+                    <div class="notice-image-modern">
+                        {% if notice.banner_image %}
+                        <img src="{{ url_for('static', filename='uploads/banners/' + notice.banner_image) }}" 
+                             alt="{{ notice.title }}">
+                        {% else %}
+                        <div class="default-notice-image">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        {% endif %}
+                        <span class="notice-category-modern {{ notice.category|lower }}">{{ notice.category }}</span>
+                    </div>
+                    <div class="notice-content-modern">
+                        <div class="notice-meta-modern">
+                            <span class="notice-date-modern">
+                                <i class="far fa-calendar"></i> {{ notice.created_at.strftime('%b %d, %Y') }}
+                            </span>
+                        </div>
+                        <h3 class="notice-title-modern">
+                            <a href="{{ url_for('notice_detail', id=notice.id) }}">{{ notice.title }}</a>
+                        </h3>
+                        <p class="notice-excerpt-modern">
+                            {{ notice.content[:100] }}...
+                        </p>
+                        <a href="{{ url_for('notice_detail', id=notice.id) }}" class="notice-link-modern">
+                            Read More <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Important Notices Section -->
+{% if important_notices %}
+<section class="important-section-modern">
+    <div class="container">
+        <div class="section-header-modern">
+            <span class="section-tag">Urgent</span>
+            <h2 class="section-heading">Important Notices</h2>
+            <p class="section-subheading">Time-sensitive announcements you need to know</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                {% for notice in important_notices %}
+                <div class="important-item-modern">
+                    <div class="important-icon-modern">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="important-content-modern">
+                        <h4>
+                            <a href="{{ url_for('notice_detail', id=notice.id) }}">{{ notice.title }}</a>
+                        </h4>
+                        <p>{{ notice.content[:150] }}...</p>
+                        <span class="important-date-modern">
+                            <i class="far fa-calendar-alt"></i> {{ notice.created_at.strftime('%d %B, %Y') }}
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Categories Section -->
+<section id="categories" class="categories-section-modern">
+    <div class="container">
+        <div class="section-header-modern">
+            <span class="section-tag">Browse</span>
+            <h2 class="section-heading">Notice Categories</h2>
+            <p class="section-subheading">Find notices by category</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <a href="{{ url_for('all_notices', category='Important') }}" class="category-card-modern important">
+                    <div class="category-icon-modern">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <h4>Important</h4>
+                    <p>Urgent announcements & alerts</p>
+                </a>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <a href="{{ url_for('all_notices', category='Event') }}" class="category-card-modern event">
+                    <div class="category-icon-modern">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h4>Events</h4>
+                    <p>Upcoming campus events</p>
+                </a>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <a href="{{ url_for('all_notices', category='Academic') }}" class="category-card-modern academic">
+                    <div class="category-icon-modern">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h4>Academic</h4>
+                    <p>Academic updates & schedules</p>
+                </a>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <a href="{{ url_for('all_notices', category='Holiday') }}" class="category-card-modern holiday">
+                    <div class="category-icon-modern">
+                        <i class="fas fa-umbrella-beach"></i>
+                    </div>
+                    <h4>Holidays</h4>
+                    <p>Vacation & holiday schedules</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recent Notices Section -->
+{% if recent_notices and recent_notices.items %}
+<section class="recent-section-modern">
+    <div class="container">
+        <div class="section-header-modern">
+            <span class="section-tag">Latest</span>
+            <h2 class="section-heading">Recently Updated</h2>
+            <p class="section-subheading">Check out the latest notices and updates</p>
+        </div>
+        
+        <div class="row g-4">
+            {% for notice in recent_notices.items %}
+            <div class="col-md-6 col-lg-4">
+                <div class="recent-card-modern">
+                    <div class="recent-header-modern">
+                        <span class="badge-modern {{ notice.category|lower }}">
+                            {{ notice.category }}
+                        </span>
+                        <small class="text-muted">
+                            <i class="far fa-clock"></i> {{ notice.created_at.strftime('%d %b') }}
+                        </small>
+                    </div>
+                    <h5 class="recent-title-modern">
+                        <a href="{{ url_for('notice_detail', id=notice.id) }}">{{ notice.title }}</a>
+                    </h5>
+                    <p class="recent-excerpt-modern">{{ notice.content[:80] }}...</p>
+                    <div class="recent-footer-modern">
+                        <span class="recent-category-modern">
+                            <i class="fas fa-tag"></i>
+                            <span class="category-badge {{ notice.category|lower }}">
+                                {{ notice.category }}
+                            </span>
+                        </span>
+                        <span class="recent-views-modern">
+                            <i class="far fa-eye"></i> {{ notice.views }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if recent_notices.pages > 1 %}
+        <div class="text-center mt-5">
+            <a href="{{ url_for('all_notices') }}" class="btn-primary-modern">
+                View All Notices <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Call to Action Section -->
+<section class="cta-section-modern">
+    <div class="container">
+        <div class="cta-content-modern">
+            <h2>Never Miss an Important Update</h2>
+            <p>Register now to save notices, get notifications, and stay connected with your institution</p>
+            {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('register') }}" class="btn-cta-modern">
+                <i class="fas fa-user-plus"></i> Get Started Today
+            </a>
+            {% else %}
+            <a href="{{ url_for('all_notices') }}" class="btn-cta-modern">
+                <i class="fas fa-bullhorn"></i> Browse All Notices
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,621 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Digital Notice Board{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-wrapper {
+        padding: 2rem 0;
+        background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+        min-height: calc(100vh - 76px);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: all 0.3s ease;
+        border: 1px solid var(--border-color);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-400), var(--primary-600));
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .stat-info h3 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--text-primary);
+        line-height: 1.2;
+    }
+
+    .stat-info p {
+        margin: 0.25rem 0 0;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+    }
+
+    .stat-icon.primary {
+        background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
+        color: var(--primary-600);
+    }
+
+    .stat-icon.success {
+        background: linear-gradient(135deg, var(--success-100), var(--success-200));
+        color: var(--success-600);
+    }
+
+    .stat-icon.warning {
+        background: linear-gradient(135deg, var(--warning-100), var(--warning-200));
+        color: var(--warning-600);
+    }
+
+    .stat-icon.danger {
+        background: linear-gradient(135deg, var(--danger-100), var(--danger-200));
+        color: var(--danger-600);
+    }
+
+    .stat-icon.info {
+        background: linear-gradient(135deg, var(--info-100), var(--info-200));
+        color: var(--info-600);
+    }
+
+    .dashboard-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .dashboard-card:hover {
+        box-shadow: var(--shadow-xl);
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    .card-header h5 {
+        margin: 0;
+        font-weight: 600;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .card-header h5 i {
+        color: var(--primary-500);
+        font-size: 1.2rem;
+    }
+
+    .view-all-link {
+        color: var(--primary-600);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        transition: all 0.3s;
+    }
+
+    .view-all-link:hover {
+        color: var(--primary-700);
+        gap: 0.5rem;
+    }
+
+    .activity-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--primary-50);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        color: var(--primary-600);
+    }
+
+    .activity-content {
+        flex: 1;
+    }
+
+    .activity-title {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .activity-meta {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .activity-meta i {
+        font-size: 0.75rem;
+    }
+
+    .student-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .student-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        object-fit: cover;
+        margin-right: 1rem;
+        border: 2px solid var(--primary-100);
+    }
+
+    .student-info {
+        flex: 1;
+    }
+
+    .student-name {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.2rem;
+    }
+
+    .student-detail {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        display: flex;
+        gap: 1rem;
+    }
+
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .quick-action-btn {
+        background: var(--gray-50);
+        border: 1px solid var(--border-color);
+        border-radius: 15px;
+        padding: 1rem;
+        text-align: center;
+        color: var(--text-primary);
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .quick-action-btn:hover {
+        background: var(--primary-50);
+        border-color: var(--primary-200);
+        transform: translateY(-3px);
+        box-shadow: var(--shadow);
+    }
+
+    .quick-action-btn i {
+        font-size: 1.5rem;
+        color: var(--primary-500);
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .quick-action-btn span {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .chart-container {
+        height: 300px;
+        margin-top: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .quick-actions {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h2 class="mb-1">Welcome back, {{ current_user.full_name }}! 👋</h2>
+                <p class="text-muted mb-0">{{ now.strftime('%A, %B %d, %Y') }}</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-primary" onclick="refreshData()">
+                    <i class="fas fa-sync-alt me-2"></i>Refresh
+                </button>
+                <button class="btn btn-primary" onclick="window.location.href='{{ url_for('add_notice') }}'">
+                    <i class="fas fa-plus me-2"></i>New Notice
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card" data-aos="fade-up">
+                <div class="stat-info">
+                    <h3>{{ total_notices }}</h3>
+                    <p>Total Notices</p>
+                </div>
+                <div class="stat-icon primary">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+            </div>
+
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-info">
+                    <h3>{{ active_notices }}</h3>
+                    <p>Active Notices</p>
+                </div>
+                <div class="stat-icon success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>
+
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-info">
+                    <h3>{{ total_students }}</h3>
+                    <p>Registered Students</p>
+                </div>
+                <div class="stat-icon info">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="stat-info">
+                    <h3>{{ total_messages }}</h3>
+                    <p>Total Messages</p>
+                </div>
+                <div class="stat-icon warning">
+                    <i class="fas fa-envelope"></i>
+                </div>
+            </div>
+
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="stat-info">
+                    <h3>{{ unread_messages }}</h3>
+                    <p>Unread Messages</p>
+                </div>
+                <div class="stat-icon danger">
+                    <i class="fas fa-envelope-open"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Recent Notices -->
+            <div class="col-lg-6 mb-4">
+                <div class="dashboard-card" data-aos="fade-up">
+                    <div class="card-header">
+                        <h5><i class="fas fa-clock me-2"></i>Recent Notices</h5>
+                        <a href="{{ url_for('manage_notices') }}" class="view-all-link">
+                            View All <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="activity-list">
+                        {% for notice in recent_notices %}
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas {% if notice.priority == 'urgent' %}fa-exclamation{% else %}fa-file-alt{% endif %}"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">{{ notice.title }}</div>
+                                <div class="activity-meta">
+                                    <span><i class="far fa-calendar me-1"></i>{{ notice.created_at.strftime('%d %b, %Y') }}</span>
+                                    <span><i class="far fa-eye me-1"></i>{{ notice.views }} views</span>
+                                    {% if notice.priority == 'urgent' %}
+                                    <span class="badge bg-danger">Urgent</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-bullhorn fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No notices yet</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Students -->
+            <div class="col-lg-6 mb-4">
+                <div class="dashboard-card" data-aos="fade-up">
+                    <div class="card-header">
+                        <h5><i class="fas fa-user-graduate me-2"></i>Recent Students</h5>
+                        <a href="{{ url_for('manage_students') }}" class="view-all-link">
+                            View All <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="student-list">
+                        {% for student in recent_students %}
+                        <div class="student-item">
+                            <img src="{{ url_for('static', filename='uploads/profiles/' + student.profile_pic) }}" 
+                                 alt="{{ student.full_name }}" class="student-avatar">
+                            <div class="student-info">
+                                <div class="student-name">{{ student.full_name }}</div>
+                                <div class="student-detail">
+                                    <span><i class="fas fa-id-card me-1"></i>{{ student.roll_number }}</span>
+                                    <span><i class="fas fa-building me-1"></i>{{ student.department }}</span>
+                                </div>
+                            </div>
+                            <span class="badge {% if student.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                {{ 'Active' if student.is_active else 'Inactive' }}
+                            </span>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No students registered</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Chart -->
+            <div class="col-12 mb-4">
+                <div class="dashboard-card" data-aos="fade-up">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-line me-2"></i>Weekly Activity</h5>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-outline-primary active" onclick="changeChart('week')">Week</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="changeChart('month')">Month</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="changeChart('year')">Year</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="col-12">
+                <div class="dashboard-card" data-aos="fade-up">
+                    <div class="card-header">
+                        <h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                    </div>
+                    <div class="quick-actions">
+                        <a href="{{ url_for('add_notice') }}" class="quick-action-btn">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Add Notice</span>
+                        </a>
+                        <a href="{{ url_for('manage_notices') }}" class="quick-action-btn">
+                            <i class="fas fa-edit"></i>
+                            <span>Manage Notices</span>
+                        </a>
+                        <a href="{{ url_for('manage_students') }}" class="quick-action-btn">
+                            <i class="fas fa-users-cog"></i>
+                            <span>Manage Students</span>
+                        </a>
+                        <a href="{{ url_for('manage_messages') }}" class="quick-action-btn">
+                            <i class="fas fa-reply-all"></i>
+                            <span>View Messages</span>
+                        </a>
+                        <a href="{{ url_for('admin_settings') }}" class="quick-action-btn">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                        <a href="#" class="quick-action-btn" onclick="exportReport()">
+                            <i class="fas fa-download"></i>
+                            <span>Export Report</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Initialize Chart
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('activityChart').getContext('2d');
+        window.activityChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Notice Views',
+                    data: [65, 59, 80, 81, 56, 55, 40],
+                    borderColor: '#4f46e5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'New Students',
+                    data: [28, 48, 40, 19, 86, 27, 90],
+                    borderColor: '#22c55e',
+                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            display: true,
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    });
+
+    function changeChart(period) {
+        // Update active button state
+        document.querySelectorAll('.btn-group .btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+
+        // Update chart data based on period
+        let labels, data1, data2;
+        if (period === 'week') {
+            labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            data1 = [65, 59, 80, 81, 56, 55, 40];
+            data2 = [28, 48, 40, 19, 86, 27, 90];
+        } else if (period === 'month') {
+            labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+            data1 = [250, 320, 280, 350];
+            data2 = [120, 180, 150, 200];
+        } else {
+            labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            data1 = [1000, 1200, 1100, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100];
+            data2 = [500, 600, 550, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100];
+        }
+
+        window.activityChart.data.labels = labels;
+        window.activityChart.data.datasets[0].data = data1;
+        window.activityChart.data.datasets[1].data = data2;
+        window.activityChart.update();
+    }
+
+    function refreshData() {
+        showNotification('Refreshing dashboard data...', 'info');
+        setTimeout(() => {
+            location.reload();
+        }, 1000);
+    }
+
+    function exportReport() {
+        showNotification('Generating report...', 'info');
+        setTimeout(() => {
+            // Simulate download
+            const link = document.createElement('a');
+            link.href = '#';
+            link.download = 'dashboard_report.pdf';
+            link.click();
+            showNotification('Report downloaded successfully!', 'success');
+        }, 2000);
+    }
+
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+        notification.style.zIndex = '9999';
+        notification.innerHTML = `
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 
+                            type === 'danger' ? 'fa-exclamation-circle' : 
+                            'fa-info-circle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+</script>
+{% endblock %}

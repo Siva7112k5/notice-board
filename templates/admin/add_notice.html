@@ -1,0 +1,764 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Notice - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-wrapper {
+        padding: 2rem 0;
+        background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+        min-height: calc(100vh - 76px);
+    }
+
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .page-header h2 {
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary-600), var(--primary-800));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-card {
+        background: var(--white);
+        border-radius: 24px;
+        box-shadow: var(--shadow-xl);
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+    }
+
+    .form-header {
+        background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .form-header h4 {
+        margin: 0;
+        color: var(--primary-700);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-body {
+        padding: 2rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-label i {
+        color: var(--primary-500);
+        font-size: 1rem;
+    }
+
+    .form-control, .form-select {
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s;
+        background: var(--white);
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-500);
+        box-shadow: 0 0 0 4px var(--primary-100);
+        outline: none;
+    }
+
+    .form-control.is-invalid {
+        border-color: var(--danger-500);
+    }
+
+    .invalid-feedback {
+        color: var(--danger-500);
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+
+    .priority-options {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.priority-card {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    background: var(--gray-50);
+    border: 2px solid var(--border-color);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    min-width: 100px;
+    text-align: center;
+}
+
+.priority-card:hover {
+    background: var(--gray-100);
+    border-color: var(--primary-400);
+    transform: translateY(-2px);
+}
+
+.priority-card.selected {
+    border-color: var(--primary-500);
+    background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+    box-shadow: 0 5px 15px rgba(229, 149, 40, 0.2);
+}
+
+.priority-card.priority-normal.selected {
+    border-color: var(--gray-500);
+    background: linear-gradient(135deg, var(--gray-100), var(--gray-200));
+}
+
+.priority-card.priority-high.selected {
+    border-color: var(--warning-500);
+    background: linear-gradient(135deg, var(--warning-50), var(--warning-100));
+}
+
+.priority-card.priority-urgent.selected {
+    border-color: var(--danger-500);
+    background: linear-gradient(135deg, var(--danger-50), var(--danger-100));
+}
+
+/* Toggle switch styling */
+.form-switch {
+    padding-left: 2.5em;
+}
+
+.form-switch .form-check-input {
+    width: 3em;
+    height: 1.5em;
+    margin-left: -2.5em;
+    cursor: pointer;
+}
+
+.form-switch .form-check-input:checked {
+    background-color: var(--primary-500);
+    border-color: var(--primary-500);
+}
+
+.form-switch .form-check-label {
+    cursor: pointer;
+    padding-left: 0.5rem;
+}
+
+    .image-preview {
+        margin-top: 1rem;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 2px dashed var(--border-color);
+        max-width: 300px;
+        position: relative;
+    }
+
+    .image-preview img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .image-preview-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .image-preview:hover .image-preview-overlay {
+        opacity: 1;
+    }
+
+    .remove-image {
+        color: var(--white);
+        cursor: pointer;
+        font-size: 1.2rem;
+    }
+
+    .file-attachment {
+        background: var(--gray-50);
+        border-radius: 12px;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 0.5rem;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        color: var(--white);
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-cancel {
+        background: var(--gray-200);
+        color: var(--text-primary);
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
+    .btn-cancel:hover {
+        background: var(--gray-300);
+        transform: translateY(-2px);
+    }
+
+    .character-count {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        text-align: right;
+        margin-top: 0.25rem;
+    }
+
+    .character-count.warning {
+        color: var(--warning-500);
+    }
+
+    .character-count.danger {
+        color: var(--danger-500);
+    }
+
+    .datetime-picker {
+        position: relative;
+    }
+
+    .datetime-picker i {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        pointer-events: none;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .form-section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-section-title i {
+        color: var(--primary-500);
+    }
+
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--gray-300);
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+        background-color: var(--primary-500);
+    }
+
+    input:checked + .toggle-slider:before {
+        transform: translateX(26px);
+    }
+
+    @media (max-width: 768px) {
+        .form-body {
+            padding: 1.5rem;
+        }
+        
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-wrapper">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h2><i class="fas fa-plus-circle me-2"></i>Add New Notice</h2>
+            <p class="text-muted">Create a new announcement for students</p>
+        </div>
+
+        <!-- Main Form Card -->
+        <div class="form-card" data-aos="fade-up">
+            <div class="form-header">
+                <h4><i class="fas fa-bullhorn"></i> Notice Information</h4>
+            </div>
+
+            <div class="form-body">
+                <form method="POST" enctype="multipart/form-data" id="noticeForm">
+                    {{ form.hidden_tag() }}
+
+                    <!-- Basic Information Section -->
+                    <div class="form-section">
+                        <h5 class="form-section-title">
+                            <i class="fas fa-info-circle"></i> Basic Information
+                        </h5>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-heading"></i> Notice Title *
+                                </label>
+                                {{ form.title(class="form-control", placeholder="Enter notice title", id="title", maxlength="200") }}
+                                <div class="character-count" id="titleCount">0/200</div>
+                                {% if form.title.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.title.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-tag"></i> Category *
+                                </label>
+                                {{ form.category(class="form-select") }}
+                                {% if form.category.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.category.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-align-left"></i> Content *
+                            </label>
+                            {{ form.content(class="form-control", rows="6", placeholder="Enter notice content...", id="content", maxlength="5000") }}
+                            <div class="character-count" id="contentCount">0/5000</div>
+                            {% if form.content.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.content.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+<!-- Priority & Featured Section -->
+<div class="form-section">
+    <h5 class="form-section-title">
+        <i class="fas fa-flag"></i> Priority & Status
+    </h5>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label class="form-label">
+                <i class="fas fa-exclamation-triangle"></i> Priority Level *
+            </label>
+            <div class="priority-options">
+                {% for value, label in form.priority.choices %}
+                <label class="priority-card {% if form.priority.data == value %}selected{% endif %}">
+                    <input type="radio" name="priority" value="{{ value }}" 
+                           class="form-check-input d-none" 
+                           {% if form.priority.data == value %}checked{% endif %}>
+                    <span class="priority-badge priority-{{ value }}">
+                        {{ label }}
+                    </span>
+                </label>
+                {% endfor %}
+            </div>
+            {% if form.priority.errors %}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.priority.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">
+                <i class="fas fa-star"></i> Featured Notice
+            </label>
+            <div class="form-check form-switch">
+                {{ form.is_featured(class="form-check-input", id="is_featured", role="switch") }}
+                <label class="form-check-label" for="is_featured">
+                    Show this notice in featured section
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Date & Time Section -->
+<div class="form-section">
+    <h5 class="form-section-title">
+        <i class="fas fa-calendar-alt"></i> Schedule
+    </h5>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label class="form-label">
+                <i class="fas fa-play"></i> Start Date & Time *
+            </label>
+            <div class="datetime-picker">
+                {{ form.start_date(class="form-control", type="datetime-local") }}
+                <i class="far fa-calendar-alt"></i>
+            </div>
+            {% if form.start_date.errors %}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.start_date.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">
+                <i class="fas fa-stop"></i> Expiry Date & Time *
+            </label>
+            <div class="datetime-picker">
+                {{ form.expiry_date(class="form-control", type="datetime-local") }}
+                <i class="far fa-calendar-alt"></i>
+            </div>
+            {% if form.expiry_date.errors %}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.expiry_date.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <small class="text-muted" id="dateWarning"></small>
+</div>
+                    <!-- Media Section -->
+                    <div class="form-section">
+                        <h5 class="form-section-title">
+                            <i class="fas fa-images"></i> Media & Attachments
+                        </h5>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-image"></i> Banner Image
+                                </label>
+                                {{ form.banner_image(class="form-control", id="banner_image", accept="image/*") }}
+                                <small class="text-muted">Recommended size: 1200x630px (Max: 5MB)</small>
+                                
+                                <!-- Image Preview -->
+                                <div class="image-preview" id="imagePreview" style="display: none;">
+                                    <img src="#" alt="Preview" id="previewImg">
+                                    <div class="image-preview-overlay">
+                                        <i class="fas fa-times remove-image" onclick="removeImage()"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-paperclip"></i> Attachment
+                                </label>
+                                {{ form.attachment(class="form-control", id="attachment", accept=".pdf,.doc,.docx,.xls,.xlsx") }}
+                                <small class="text-muted">Allowed: PDF, DOC, DOCX, XLS, XLSX (Max: 10MB)</small>
+                                
+                                <!-- Attachment Preview -->
+                                <div class="file-attachment" id="attachmentPreview" style="display: none;">
+                                    <div>
+                                        <i class="fas fa-file-pdf text-danger me-2"></i>
+                                        <span id="fileName"></span>
+                                    </div>
+                                    <i class="fas fa-times text-danger" style="cursor: pointer;" onclick="removeAttachment()"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <a href="{{ url_for('manage_notices') }}" class="btn-cancel">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn-submit" id="submitBtn">
+                            <i class="fas fa-paper-plane me-2"></i>Publish Notice
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Character counters
+    document.getElementById('title').addEventListener('input', function() {
+        const count = this.value.length;
+        const counter = document.getElementById('titleCount');
+        counter.textContent = `${count}/200`;
+        
+        if (count > 180) {
+            counter.classList.add('warning');
+        } else {
+            counter.classList.remove('warning');
+        }
+        
+        if (count >= 200) {
+            counter.classList.add('danger');
+        } else {
+            counter.classList.remove('danger');
+        }
+    });
+
+    document.getElementById('content').addEventListener('input', function() {
+        const count = this.value.length;
+        const counter = document.getElementById('contentCount');
+        counter.textContent = `${count}/5000`;
+        
+        if (count > 4500) {
+            counter.classList.add('warning');
+        } else {
+            counter.classList.remove('warning');
+        }
+        
+        if (count >= 5000) {
+            counter.classList.add('danger');
+        } else {
+            counter.classList.remove('danger');
+        }
+    });
+
+    // Image preview
+    document.getElementById('banner_image').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size must be less than 5MB');
+                this.value = '';
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('previewImg').src = e.target.result;
+                document.getElementById('imagePreview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    function removeImage() {
+        document.getElementById('banner_image').value = '';
+        document.getElementById('imagePreview').style.display = 'none';
+    }
+
+    // Attachment preview
+    document.getElementById('attachment').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            if (file.size > 10 * 1024 * 1024) {
+                alert('File size must be less than 10MB');
+                this.value = '';
+                return;
+            }
+            
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('attachmentPreview').style.display = 'flex';
+        }
+    });
+
+    function removeAttachment() {
+        document.getElementById('attachment').value = '';
+        document.getElementById('attachmentPreview').style.display = 'none';
+    }
+
+    // Date validation
+    function validateDates() {
+        const startDate = new Date(document.getElementById('start_date').value);
+        const expiryDate = new Date(document.getElementById('expiry_date').value);
+        const warning = document.getElementById('dateWarning');
+        
+        if (startDate && expiryDate) {
+            if (expiryDate <= startDate) {
+                warning.textContent = '⚠️ Expiry date must be after start date';
+                warning.style.color = 'var(--danger-500)';
+                return false;
+            } else {
+                const diffDays = Math.ceil((expiryDate - startDate) / (1000 * 60 * 60 * 24));
+                warning.textContent = `Notice will be active for ${diffDays} days`;
+                warning.style.color = 'var(--success-500)';
+                return true;
+            }
+        }
+        return true;
+    }
+
+    document.getElementById('start_date').addEventListener('change', validateDates);
+    document.getElementById('expiry_date').addEventListener('change', validateDates);
+
+    // Form submission
+    document.getElementById('noticeForm').addEventListener('submit', function(e) {
+        if (!validateDates()) {
+            e.preventDefault();
+            return;
+        }
+        
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Publishing...';
+    });
+
+    // Set minimum date to today
+    const today = new Date().toISOString().slice(0, 16);
+    document.getElementById('start_date').min = today;
+    document.getElementById('expiry_date').min = today;
+
+    // Auto-save draft (optional)
+    let autoSaveTimeout;
+    document.getElementById('noticeForm').addEventListener('input', function() {
+        clearTimeout(autoSaveTimeout);
+        autoSaveTimeout = setTimeout(() => {
+            localStorage.setItem('noticeDraft', JSON.stringify({
+                title: document.getElementById('title').value,
+                content: document.getElementById('content').value,
+                category: document.getElementById('category').value,
+                priority: document.querySelector('input[name="priority"]:checked')?.value
+            }));
+            showNotification('Draft saved', 'info');
+        }, 5000);
+    });
+
+    // Load draft
+    window.addEventListener('load', function() {
+        const draft = localStorage.getItem('noticeDraft');
+        if (draft) {
+            if (confirm('You have an unsaved draft. Would you like to restore it?')) {
+                const data = JSON.parse(draft);
+                document.getElementById('title').value = data.title || '';
+                document.getElementById('content').value = data.content || '';
+                if (data.category) {
+                    document.getElementById('category').value = data.category;
+                }
+                if (data.priority) {
+                    document.querySelector(`input[name="priority"][value="${data.priority}"]`).checked = true;
+                }
+                // Trigger counters
+                document.getElementById('title').dispatchEvent(new Event('input'));
+                document.getElementById('content').dispatchEvent(new Event('input'));
+            }
+            localStorage.removeItem('noticeDraft');
+        }
+    });
+
+    function showNotification(message, type) {
+        // Reuse notification function from previous templates
+    }
+</script>
+<script>
+    // Add this to your existing JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    const priorityInputs = document.querySelectorAll('input[name="priority"]');
+    const priorityCards = document.querySelectorAll('.priority-card');
+    
+    priorityInputs.forEach((input, index) => {
+        input.addEventListener('change', function() {
+            priorityCards.forEach(card => card.classList.remove('selected'));
+            if (this.checked) {
+                priorityCards[index].classList.add('selected');
+            }
+        });
+        
+        // Set initial selected state
+        if (input.checked) {
+            priorityCards[index].classList.add('selected');
+        }
+    });
+});
+</script>
+
+{% endblock %}
