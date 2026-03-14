@@ -86,25 +86,37 @@ def index():
                          event_notices=event_notices,
                          academic_notices=academic_notices)
 
-# All Notices Page
 @app.route('/notices')
 def all_notices():
     page = request.args.get('page', 1, type=int)
     category = request.args.get('category', 'all')
     
-    query = Notice.query.filter_by(is_published=True).filter(
-        (Notice.expiry_date.is_(None)) | (Notice.expiry_date > datetime.utcnow())
-    )
+    # Base query - get ALL published notices
+    query = Notice.query.filter_by(is_published=True)
     
+    # Optional: Remove expiry date filter temporarily to see all notices
+    # query = Notice.query.filter_by(is_published=True).filter(
+    #     (Notice.expiry_date.is_(None)) | (Notice.expiry_date > datetime.utcnow())
+    # )
+    
+    # Apply category filter if specified
     if category != 'all':
         query = query.filter_by(category=category)
     
+    # Order by priority and date
     notices = query.order_by(
         Notice.priority.desc(),
         Notice.created_at.desc()
-    ).paginate(page=page, per_page=Config.NOTICES_PER_PAGE, error_out=False)
+    ).paginate(page=page, per_page=9, error_out=False)
     
-    return render_template('all_notices.html', notices=notices, current_category=category)
+    # Get all categories for filter
+    categories = db.session.query(Notice.category).distinct().all()
+    categories = [c[0] for c in categories]
+    
+    return render_template('all_notices.html', 
+                         notices=notices, 
+                         current_category=category,
+                         categories=categories)
 
 # Notice Detail Page
 @app.route('/notice/<int:id>')

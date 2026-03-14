@@ -141,7 +141,7 @@ class Notification(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     title = db.Column(db.String(200), nullable=False)
     message = db.Column(db.Text, nullable=False)
-    type = db.Column(db.String(50), default='info')  # info, success, warning, danger
+    type = db.Column(db.String(50), default='info')
     link = db.Column(db.String(200))
     is_read = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -183,16 +183,3 @@ class ContactMessage(db.Model):
     
     def __repr__(self):
         return f'<ContactMessage {self.subject}>'
-    
-class User(db.Model, UserMixin):
-    # ... existing code ...
-    
-    @property
-    def unread_notifications_count(self):
-        """Get count of unread notifications"""
-        return Notification.query.filter_by(user_id=self.id, is_read=False).count()
-    
-    @property
-    def unread_notifications(self):
-        """Get unread notifications"""
-        return Notification.query.filter_by(user_id=self.id, is_read=False).order_by(Notification.created_at.desc()).all()    

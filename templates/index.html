@@ -5,11 +5,11 @@
 {% block extra_css %}
 <style>
     /* ==========================================================================
-       Hero Section - Brown/Gold Theme
+       Modern Professional Hero Section
        ========================================================================== */
     .hero-section {
         position: relative;
-        background: linear-gradient(135deg, var(--primary-800), var(--primary-950));
+        background: linear-gradient(145deg, #0B2A4A 0%, #1B3A5C 100%);
         padding: 6rem 0;
         overflow: hidden;
         min-height: 85vh;
@@ -17,16 +17,20 @@
         align-items: center;
     }
 
+    /* Subtle geometric pattern overlay */
     .hero-section::before {
         content: '';
         position: absolute;
-        inset: 0;
-        background-image: 
-            radial-gradient(circle at 30% 50%, rgba(229, 149, 40, 0.15) 0%, transparent 50%),
-            radial-gradient(circle at 70% 80%, rgba(229, 149, 40, 0.15) 0%, transparent 50%);
-        z-index: 1;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><path d="M30 0 L60 30 L30 60 L0 30 Z" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/></svg>');
+        background-size: 60px 60px;
+        opacity: 0.5;
     }
 
+    /* Soft radial gradient for depth */
     .hero-section::after {
         content: '';
         position: absolute;
@@ -34,9 +38,8 @@
         right: -20%;
         width: 80%;
         height: 200%;
-        background: radial-gradient(circle at center, rgba(229, 149, 40, 0.1) 0%, transparent 70%);
+        background: radial-gradient(circle at center, rgba(255,255,255,0.08) 0%, transparent 70%);
         pointer-events: none;
-        z-index: 2;
     }
 
     .hero-container {
@@ -52,16 +55,16 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255,255,255,0.1);
         backdrop-filter: blur(10px);
         padding: 0.5rem 1rem;
         border-radius: 100px;
         margin-bottom: 1.5rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255,255,255,0.1);
     }
 
     .hero-badge span {
-        color: var(--warning-400);
+        color: #FFB347;
         font-size: 0.85rem;
         font-weight: 600;
         letter-spacing: 0.5px;
@@ -69,7 +72,7 @@
     }
 
     .hero-badge i {
-        color: var(--warning-400);
+        color: #FFB347;
         font-size: 0.9rem;
     }
 
@@ -77,14 +80,14 @@
         font-size: 3.75rem;
         font-weight: 700;
         line-height: 1.1;
-        color: var(--white);
+        color: #ffffff;
         margin-bottom: 1.5rem;
         letter-spacing: -0.02em;
     }
 
     .hero-title-light {
         font-weight: 300;
-        color: rgba(255, 255, 255, 0.9);
+        color: rgba(255,255,255,0.9);
         display: block;
         margin-bottom: 0.5rem;
     }
@@ -92,7 +95,7 @@
     .hero-title-highlight {
         position: relative;
         display: inline-block;
-        color: var(--warning-400);
+        color: #FFB347;
     }
 
     .hero-title-highlight::after {
@@ -102,14 +105,14 @@
         left: 0;
         width: 100%;
         height: 8px;
-        background: rgba(229, 149, 40, 0.3);
+        background: rgba(255, 179, 71, 0.3);
         border-radius: 4px;
         z-index: -1;
     }
 
     .hero-description {
         font-size: 1.2rem;
-        color: rgba(255, 255, 255, 0.7);
+        color: rgba(255,255,255,0.7);
         margin-bottom: 2.5rem;
         line-height: 1.6;
         max-width: 550px;
@@ -126,8 +129,8 @@
         display: inline-flex;
         align-items: center;
         gap: 0.75rem;
-        background: var(--gradient-gold);
-        color: var(--white);
+        background: #FFB347;
+        color: #0B2A4A;
         padding: 1rem 2rem;
         border-radius: 12px;
         font-weight: 600;
@@ -138,9 +141,9 @@
     }
 
     .btn-primary-modern:hover {
-        background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        background: #ffa42b;
         transform: translateY(-2px);
-        box-shadow: 0 20px 30px -10px rgba(229, 149, 40, 0.3);
+        box-shadow: 0 20px 30px -10px rgba(255, 179, 71, 0.3);
     }
 
     .btn-outline-modern {
@@ -148,19 +151,19 @@
         align-items: center;
         gap: 0.75rem;
         background: transparent;
-        color: var(--white);
+        color: #ffffff;
         padding: 1rem 2rem;
         border-radius: 12px;
         font-weight: 600;
         text-decoration: none;
-        border: 1.5px solid rgba(255, 255, 255, 0.2);
+        border: 1.5px solid rgba(255,255,255,0.2);
         transition: all 0.3s ease;
         cursor: pointer;
     }
 
     .btn-outline-modern:hover {
-        border-color: var(--warning-400);
-        background: rgba(229, 149, 40, 0.1);
+        border-color: #FFB347;
+        background: rgba(255, 179, 71, 0.1);
         transform: translateY(-2px);
     }
 
@@ -179,14 +182,14 @@
     .stat-number {
         font-size: 2rem;
         font-weight: 700;
-        color: var(--warning-400);
+        color: #FFB347;
         line-height: 1;
         margin-bottom: 0.25rem;
     }
 
     .stat-label {
         font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.6);
+        color: rgba(255,255,255,0.6);
         text-transform: uppercase;
         letter-spacing: 1px;
     }
@@ -201,7 +204,7 @@
         position: relative;
         border-radius: 24px;
         overflow: hidden;
-        box-shadow: 0 30px 40px -20px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 30px 40px -20px rgba(0,0,0,0.3);
     }
 
     .hero-image-main img {
@@ -219,12 +222,12 @@
         position: absolute;
         bottom: -20px;
         left: -20px;
-        background: rgba(255, 255, 255, 0.95);
+        background: rgba(255,255,255,0.95);
         backdrop-filter: blur(10px);
         padding: 1rem 1.5rem;
         border-radius: 16px;
-        box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 20px 30px -10px rgba(0,0,0,0.2);
+        border: 1px solid rgba(255,255,255,0.3);
         display: flex;
         align-items: center;
         gap: 1rem;
@@ -232,7 +235,7 @@
 
     .hero-image-card i {
         font-size: 2rem;
-        color: var(--warning-400);
+        color: #FFB347;
     }
 
     .hero-card-content {
@@ -242,7 +245,7 @@
 
     .hero-card-label {
         font-size: 0.8rem;
-        color: var(--text-secondary);
+        color: #666;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
@@ -250,11 +253,11 @@
     .hero-card-value {
         font-size: 1.1rem;
         font-weight: 600;
-        color: var(--primary-800);
+        color: #0B2A4A;
     }
 
     /* ==========================================================================
-       Section Headers - Brown/Gold Theme
+       Section Headers
        ========================================================================== */
     .section-header-modern {
         text-align: center;
@@ -267,63 +270,57 @@
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 2px;
-        color: var(--white);
-        background: var(--gradient-gold);
+        color: #FFB347;
+        background: rgba(255, 179, 71, 0.1);
         padding: 0.5rem 1.5rem;
         border-radius: 100px;
         margin-bottom: 1rem;
-        box-shadow: 0 5px 15px rgba(229, 149, 40, 0.3);
     }
 
     .section-heading {
         font-size: 2.5rem;
         font-weight: 700;
-        background: var(--gradient-gold);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        color: #0B2A4A;
         margin-bottom: 1rem;
         line-height: 1.2;
     }
 
     .section-heading-light {
-        color: var(--white);
-        background: none;
-        -webkit-text-fill-color: var(--white);
+        color: #ffffff;
     }
 
     .section-subheading {
         font-size: 1.1rem;
-        color: var(--text-secondary);
+        color: #666;
         max-width: 600px;
         margin: 0 auto;
     }
 
     .section-subheading-light {
-        color: rgba(255, 255, 255, 0.7);
+        color: rgba(255,255,255,0.7);
     }
 
     /* ==========================================================================
-       Featured Notices Cards - Brown/Gold Theme
+       Featured Notices Cards - Modern
        ========================================================================== */
     .featured-section {
         padding: 6rem 0;
-        background: var(--gray-50);
+        background: #f8fafc;
     }
 
     .notice-card-modern {
-        background: var(--white);
+        background: #ffffff;
         border-radius: 20px;
         overflow: hidden;
-        box-shadow: var(--shadow-lg);
+        box-shadow: 0 10px 30px -15px rgba(0,0,0,0.1);
         transition: all 0.3s ease;
         height: 100%;
-        border: 1px solid var(--border-color);
+        border: 1px solid rgba(0,0,0,0.05);
     }
 
     .notice-card-modern:hover {
         transform: translateY(-8px);
-        box-shadow: var(--shadow-2xl);
-        border-color: var(--warning-200);
+        box-shadow: 0 25px 40px -20px rgba(11, 42, 74, 0.2);
     }
 
     .notice-image-modern {
@@ -351,29 +348,30 @@
         border-radius: 100px;
         font-size: 0.8rem;
         font-weight: 600;
-        background: rgba(255, 255, 255, 0.95);
+        background: rgba(255,255,255,0.95);
         backdrop-filter: blur(5px);
-        box-shadow: var(--shadow);
+        color: #0B2A4A;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
 
     .notice-category-modern.important {
-        background: var(--danger-500);
-        color: var(--white);
+        background: rgba(220, 53, 69, 0.95);
+        color: #ffffff;
     }
 
     .notice-category-modern.event {
-        background: var(--success-500);
-        color: var(--white);
+        background: rgba(40, 167, 69, 0.95);
+        color: #ffffff;
     }
 
     .notice-category-modern.academic {
-        background: var(--primary-500);
-        color: var(--white);
+        background: rgba(11, 42, 74, 0.95);
+        color: #ffffff;
     }
 
     .notice-category-modern.holiday {
-        background: var(--warning-500);
-        color: var(--white);
+        background: rgba(255, 179, 71, 0.95);
+        color: #0B2A4A;
     }
 
     .notice-content-modern {
@@ -392,17 +390,17 @@
         align-items: center;
         gap: 0.4rem;
         font-size: 0.85rem;
-        color: var(--text-muted);
+        color: #888;
     }
 
     .notice-date-modern i {
-        color: var(--warning-400);
+        color: #FFB347;
     }
 
     .notice-title-modern {
         font-size: 1.3rem;
         font-weight: 600;
-        color: var(--text-primary);
+        color: #0B2A4A;
         margin-bottom: 0.8rem;
         line-height: 1.4;
     }
@@ -413,11 +411,11 @@
     }
 
     .notice-title-modern a:hover {
-        color: var(--primary-500);
+        color: #FFB347;
     }
 
     .notice-excerpt-modern {
-        color: var(--text-secondary);
+        color: #666;
         margin-bottom: 1.5rem;
         line-height: 1.6;
         font-size: 0.95rem;
@@ -427,7 +425,7 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        color: var(--primary-500);
+        color: #FFB347;
         font-weight: 600;
         text-decoration: none;
         font-size: 0.95rem;
@@ -436,15 +434,14 @@
 
     .notice-link-modern:hover {
         gap: 0.8rem;
-        color: var(--primary-600);
     }
 
     /* ==========================================================================
-       Important Notices - Brown/Gold Theme
+       Important Notices - Modern
        ========================================================================== */
     .important-section-modern {
         padding: 6rem 0;
-        background: var(--white);
+        background: #ffffff;
     }
 
     .important-item-modern {
@@ -452,28 +449,28 @@
         align-items: flex-start;
         gap: 1.5rem;
         padding: 1.5rem;
-        background: var(--gray-50);
+        background: #f8fafc;
         border-radius: 16px;
         margin-bottom: 1rem;
         transition: all 0.3s ease;
-        border-left: 4px solid var(--danger-500);
+        border: 1px solid rgba(0,0,0,0.03);
     }
 
     .important-item-modern:hover {
-        background: var(--white);
-        box-shadow: var(--shadow-lg);
-        transform: translateX(10px);
+        background: #ffffff;
+        box-shadow: 0 15px 30px -15px rgba(220, 53, 69, 0.1);
+        border-color: rgba(220, 53, 69, 0.1);
     }
 
     .important-icon-modern {
         width: 48px;
         height: 48px;
         border-radius: 12px;
-        background: var(--danger-50);
+        background: rgba(220, 53, 69, 0.1);
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--danger-500);
+        color: #dc3545;
         font-size: 1.4rem;
         flex-shrink: 0;
     }
@@ -489,69 +486,56 @@
     }
 
     .important-content-modern h4 a {
-        color: var(--text-primary);
+        color: #0B2A4A;
         text-decoration: none;
     }
 
     .important-content-modern h4 a:hover {
-        color: var(--danger-500);
+        color: #dc3545;
     }
 
     .important-content-modern p {
-        color: var(--text-secondary);
+        color: #666;
         margin: 0 0 0.5rem;
         font-size: 0.9rem;
     }
 
     .important-date-modern {
         font-size: 0.85rem;
-        color: var(--text-muted);
+        color: #999;
         display: flex;
         align-items: center;
         gap: 0.4rem;
     }
 
     .important-date-modern i {
-        color: var(--warning-400);
+        color: #FFB347;
     }
 
     /* ==========================================================================
-       Categories - Brown/Gold Theme
+       Categories - Modern
        ========================================================================== */
     .categories-section-modern {
         padding: 6rem 0;
-        background: var(--gray-50);
+        background: #f8fafc;
     }
 
     .category-card-modern {
         display: block;
         padding: 2rem;
-        background: var(--white);
+        background: #ffffff;
         border-radius: 20px;
         text-align: center;
         text-decoration: none;
-        box-shadow: var(--shadow-lg);
+        box-shadow: 0 10px 30px -15px rgba(0,0,0,0.1);
         transition: all 0.3s ease;
-        border: 1px solid var(--border-color);
+        border: 1px solid rgba(0,0,0,0.03);
         height: 100%;
     }
 
     .category-card-modern:hover {
         transform: translateY(-8px);
-        box-shadow: var(--shadow-2xl);
-    }
-
-    .category-card-modern.important:hover {
-        background: linear-gradient(135deg, var(--danger-50), var(--white));
-    }
-    .category-card-modern.event:hover {
-        background: linear-gradient(135deg, var(--success-50), var(--white));
-    }
-    .category-card-modern.academic:hover {
-        background: linear-gradient(135deg, var(--primary-50), var(--white));
-    }
-    .category-card-modern.holiday:hover {
-        background: linear-gradient(135deg, var(--warning-50), var(--white));
+        box-shadow: 0 25px 40px -20px rgba(11, 42, 74, 0.2);
     }
 
     .category-icon-modern {
@@ -567,60 +551,59 @@
     }
 
     .category-card-modern.important .category-icon-modern {
-        background: var(--danger-100);
-        color: var(--danger-500);
+        background: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
     }
     .category-card-modern.event .category-icon-modern {
-        background: var(--success-100);
-        color: var(--success-500);
+        background: rgba(40, 167, 69, 0.1);
+        color: #28a745;
     }
     .category-card-modern.academic .category-icon-modern {
-        background: var(--primary-100);
-        color: var(--primary-500);
+        background: rgba(11, 42, 74, 0.1);
+        color: #0B2A4A;
     }
     .category-card-modern.holiday .category-icon-modern {
-        background: var(--warning-100);
-        color: var(--warning-500);
+        background: rgba(255, 179, 71, 0.1);
+        color: #FFB347;
     }
 
     .category-card-modern:hover .category-icon-modern {
-        transform: scale(1.1) rotate(5deg);
+        transform: scale(1.1);
     }
 
     .category-card-modern h4 {
-        color: var(--text-primary);
+        color: #0B2A4A;
         margin-bottom: 0.5rem;
         font-weight: 600;
         font-size: 1.2rem;
     }
 
     .category-card-modern p {
-        color: var(--text-secondary);
+        color: #666;
         margin: 0;
         font-size: 0.9rem;
     }
 
     /* ==========================================================================
-       Recent Notices - Brown/Gold Theme
+       Recent Notices - Modern
        ========================================================================== */
     .recent-section-modern {
         padding: 6rem 0;
-        background: var(--white);
+        background: #ffffff;
     }
 
     .recent-card-modern {
-        background: var(--gray-50);
+        background: #f8fafc;
         border-radius: 16px;
         padding: 1.8rem;
         transition: all 0.3s ease;
         height: 100%;
-        border: 1px solid var(--border-color);
+        border: 1px solid rgba(0,0,0,0.03);
     }
 
     .recent-card-modern:hover {
-        background: var(--white);
-        box-shadow: var(--shadow-lg);
-        transform: translateY(-5px);
+        background: #ffffff;
+        box-shadow: 0 20px 35px -20px rgba(11, 42, 74, 0.15);
     }
 
     .recent-header-modern {
@@ -638,28 +621,34 @@
     }
 
     .badge-modern.important {
-        background: var(--danger-100);
-        color: var(--danger-500);
+        background: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
     }
 
     .badge-modern.event {
-        background: var(--success-100);
-        color: var(--success-500);
+        background: rgba(40, 167, 69, 0.1);
+        color: #28a745;
     }
 
     .badge-modern.academic {
-        background: var(--primary-100);
-        color: var(--primary-500);
+        background: rgba(11, 42, 74, 0.1);
+        color: #0B2A4A;
     }
 
     .badge-modern.holiday {
-        background: var(--warning-100);
-        color: var(--warning-500);
+        background: rgba(255, 179, 71, 0.1);
+        color: #FFB347;
     }
 
     .badge-modern.urgent {
-        background: var(--danger-500);
-        color: var(--white);
+        background: rgba(220, 53, 69, 0.15);
+        color: #dc3545;
+        font-weight: 700;
+    }
+
+    .badge-modern.normal {
+        background: rgba(11, 42, 74, 0.1);
+        color: #0B2A4A;
     }
 
     .recent-title-modern {
@@ -670,16 +659,16 @@
     }
 
     .recent-title-modern a {
-        color: var(--text-primary);
+        color: #0B2A4A;
         text-decoration: none;
     }
 
     .recent-title-modern a:hover {
-        color: var(--primary-500);
+        color: #FFB347;
     }
 
     .recent-excerpt-modern {
-        color: var(--text-secondary);
+        color: #666;
         font-size: 0.9rem;
         margin-bottom: 1rem;
         line-height: 1.6;
@@ -690,19 +679,19 @@
         align-items: center;
         justify-content: space-between;
         padding-top: 1rem;
-        border-top: 1px solid var(--border-color);
+        border-top: 1px solid rgba(0,0,0,0.05);
     }
 
     .recent-category-modern {
         font-size: 0.85rem;
-        color: var(--text-muted);
+        color: #999;
         display: flex;
         align-items: center;
         gap: 0.4rem;
     }
 
     .recent-category-modern i {
-        color: var(--warning-400);
+        color: #FFB347;
     }
 
     .recent-category-modern .category-badge {
@@ -712,39 +701,39 @@
     }
 
     .recent-category-modern .category-badge.important {
-        background: var(--danger-50);
-        color: var(--danger-500);
+        background: rgba(220, 53, 69, 0.08);
+        color: #dc3545;
     }
 
     .recent-category-modern .category-badge.event {
-        background: var(--success-50);
-        color: var(--success-500);
+        background: rgba(40, 167, 69, 0.08);
+        color: #28a745;
     }
 
     .recent-category-modern .category-badge.academic {
-        background: var(--primary-50);
-        color: var(--primary-500);
+        background: rgba(11, 42, 74, 0.08);
+        color: #0B2A4A;
     }
 
     .recent-category-modern .category-badge.holiday {
-        background: var(--warning-50);
-        color: var(--warning-500);
+        background: rgba(255, 179, 71, 0.08);
+        color: #FFB347;
     }
 
     .recent-views-modern {
         font-size: 0.85rem;
-        color: var(--text-muted);
+        color: #999;
         display: flex;
         align-items: center;
         gap: 0.4rem;
     }
 
     /* ==========================================================================
-       CTA Section - Brown/Gold Theme
+       CTA Section - Modern
        ========================================================================== */
     .cta-section-modern {
         padding: 6rem 0;
-        background: linear-gradient(135deg, var(--primary-800), var(--primary-950));
+        background: linear-gradient(145deg, #0B2A4A 0%, #1B3A5C 100%);
         position: relative;
         overflow: hidden;
     }
@@ -752,33 +741,19 @@
     .cta-section-modern::before {
         content: '';
         position: absolute;
-        inset: 0;
-        background: 
-            radial-gradient(circle at 30% 50%, rgba(229, 149, 40, 0.15) 0%, transparent 50%),
-            radial-gradient(circle at 70% 80%, rgba(229, 149, 40, 0.15) 0%, transparent 50%);
-    }
-
-    .cta-section-modern::after {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -20%;
-        width: 80%;
-        height: 200%;
-        background: radial-gradient(circle at center, rgba(229, 149, 40, 0.1) 0%, transparent 70%);
-        animation: rotate 60s linear infinite;
-    }
-
-    @keyframes rotate {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.05)"/></svg>');
+        background-size: 40px 40px;
     }
 
     .cta-content-modern {
         position: relative;
         z-index: 2;
         text-align: center;
-        color: var(--white);
+        color: #ffffff;
         max-width: 700px;
         margin: 0 auto;
     }
@@ -788,20 +763,22 @@
         font-weight: 700;
         margin-bottom: 1rem;
         line-height: 1.2;
+        color: white;
     }
 
     .cta-content-modern p {
         font-size: 1.2rem;
         opacity: 0.8;
         margin-bottom: 2rem;
+        color: #a5adb4;
     }
 
     .btn-cta-modern {
         display: inline-flex;
         align-items: center;
         gap: 0.75rem;
-        background: var(--gradient-gold);
-        color: var(--white);
+        background: #FFB347;
+        color: #0B2A4A;
         padding: 1.2rem 2.5rem;
         border-radius: 12px;
         font-weight: 600;
@@ -813,32 +790,39 @@
     }
 
     .btn-cta-modern:hover {
-        background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        background: #ffa42b;
         transform: translateY(-3px);
-        box-shadow: 0 25px 35px -15px rgba(229, 149, 40, 0.4);
+        box-shadow: 0 25px 35px -15px rgba(255, 179, 71, 0.4);
     }
 
     /* ==========================================================================
-       Utility Classes - Brown/Gold Theme
+       Utility Classes
        ========================================================================== */
-    .text-gradient-gold {
-        background: var(--gradient-gold);
+    .text-gradient-modern {
+        background: linear-gradient(145deg, #FFB347, #ff9f1a);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
 
-    .bg-soft-gold {
-        background: var(--warning-50);
+    .bg-soft-primary {
+        background: #f0f5fa;
     }
 
-    .bg-soft-earth {
-        background: var(--secondary-50);
+    .bg-soft-warning {
+        background: rgba(255, 179, 71, 0.05);
     }
 
-    .border-gradient-gold {
-        border: 2px solid transparent;
-        border-image: var(--gradient-gold);
-        border-image-slice: 1;
+    .rounded-2xl {
+        border-radius: 24px;
+    }
+
+    .shadow-soft {
+        box-shadow: 0 10px 40px -20px rgba(11, 42, 74, 0.15);
+    }
+
+    .shadow-soft-hover:hover {
+        box-shadow: 0 20px 50px -25px rgba(11, 42, 74, 0.25);
     }
 
     /* ==========================================================================
@@ -1002,7 +986,7 @@
 {% endblock %}
 
 {% block content %}
-<!-- Modern Hero Section -->
+<!-- Modern Hero Section HTML -->
 <section class="hero-section">
     <div class="container hero-container">
         <div class="row align-items-center">
@@ -1015,7 +999,7 @@
                     
                     <h1 class="hero-title animate-fade-up delay-1">
                         <span class="hero-title-light">Welcome to</span>
-                        <span class="hero-title-highlight">NoticeHub</span>
+                        <span class="hero-title-highlight">University Notice Board</span>
                     </h1>
                     
                     <p class="hero-description animate-fade-up delay-2">
@@ -1090,9 +1074,8 @@
                         <img src="{{ url_for('static', filename='uploads/banners/' + notice.banner_image) }}" 
                              alt="{{ notice.title }}">
                         {% else %}
-                        <div class="default-notice-image">
-                            <i class="fas fa-bullhorn"></i>
-                        </div>
+                        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                             alt="Notice image">
                         {% endif %}
                         <span class="notice-category-modern {{ notice.category|lower }}">{{ notice.category }}</span>
                     </div>
@@ -1222,8 +1205,8 @@
             <div class="col-md-6 col-lg-4">
                 <div class="recent-card-modern">
                     <div class="recent-header-modern">
-                        <span class="badge-modern {{ notice.category|lower }}">
-                            {{ notice.category }}
+                        <span class="badge-modern {{ notice.priority|lower if notice.priority else 'normal' }}">
+                            {{ notice.priority|title if notice.priority else 'Normal' }}
                         </span>
                         <small class="text-muted">
                             <i class="far fa-clock"></i> {{ notice.created_at.strftime('%d %b') }}

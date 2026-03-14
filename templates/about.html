@@ -2,6 +2,600 @@
 
 {% block title %}About Us - Digital Notice Board{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* ==========================================================================
+       Page Header
+       ========================================================================== */
+    .page-header {
+        background: linear-gradient(135deg, var(--gray-900), var(--gray-700));
+        padding: 4rem 0;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: rotate 60s linear infinite;
+    }
+
+    .page-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient-gold);
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .page-title {
+        color: var(--white);
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        position: relative;
+        z-index: 2;
+        animation: fadeInDown 1s ease;
+    }
+
+    .page-header .breadcrumb {
+        background: transparent;
+        margin: 0;
+        justify-content: center;
+        position: relative;
+        z-index: 2;
+        animation: fadeInUp 1s ease;
+    }
+
+    .page-header .breadcrumb-item a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .page-header .breadcrumb-item a:hover {
+        color: var(--warning-400);
+    }
+
+    .page-header .breadcrumb-item.active {
+        color: var(--warning-400);
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ==========================================================================
+       About Section
+       ========================================================================== */
+    .about-section {
+        padding: 5rem 0;
+        background: var(--white);
+    }
+
+    .about-image {
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--shadow-2xl);
+    }
+
+    .about-image::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, var(--primary-500), transparent);
+        opacity: 0.2;
+        z-index: 1;
+    }
+
+    .about-image img {
+        width: 100%;
+        height: auto;
+        transition: transform 0.5s;
+    }
+
+    .about-image:hover img {
+        transform: scale(1.05);
+    }
+
+    .about-content {
+        padding-left: 2rem;
+    }
+
+    .section-subtitle {
+        display: inline-block;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        background: var(--gradient-gold);
+        color: var(--white);
+        padding: 0.5rem 2rem;
+        border-radius: 50px;
+        margin-bottom: 1rem;
+        box-shadow: var(--shadow);
+    }
+
+    .about-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .about-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 80px;
+        height: 4px;
+        background: var(--gradient-gold);
+        border-radius: 2px;
+    }
+
+    .about-text {
+        color: var(--text-secondary);
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
+    }
+
+    .about-features {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background: var(--gray-50);
+        border-radius: 12px;
+        transition: all 0.3s;
+    }
+
+    .feature-item:hover {
+        transform: translateX(5px);
+        background: var(--gradient-gold);
+        color: var(--white);
+    }
+
+    .feature-item:hover i {
+        color: var(--white) !important;
+    }
+
+    .feature-item i {
+        font-size: 1.2rem;
+    }
+
+    .feature-item span {
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+    /* ==========================================================================
+       Admin Profile Card
+       ========================================================================== */
+    .admin-profile-section {
+        background: linear-gradient(135deg, var(--gray-50), var(--white));
+        padding: 5rem 0;
+    }
+
+    .admin-profile-card {
+        background: var(--white);
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: var(--shadow-2xl);
+        transition: all 0.3s;
+        position: relative;
+    }
+
+    .admin-profile-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 30px 50px rgba(0,0,0,0.2);
+    }
+
+    .admin-profile-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 200px;
+        background: var(--gradient-gold);
+        z-index: 1;
+    }
+
+    .admin-profile-image {
+        position: relative;
+        z-index: 2;
+        width: 150px;
+        height: 150px;
+        margin: 50px auto 20px;
+        border-radius: 50%;
+        border: 5px solid var(--white);
+        overflow: hidden;
+        box-shadow: var(--shadow-xl);
+    }
+
+    .admin-profile-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s;
+    }
+
+    .admin-profile-card:hover .admin-profile-image img {
+        transform: scale(1.1);
+    }
+
+    .admin-profile-info {
+        position: relative;
+        z-index: 2;
+        padding: 0 2rem 2rem;
+        text-align: center;
+    }
+
+    .admin-profile-info h3 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .admin-role {
+        display: inline-block;
+        background: var(--gradient-gold);
+        color: var(--white);
+        padding: 0.4rem 1.5rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .admin-bio {
+        color: var(--text-secondary);
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
+    }
+
+    .admin-contact {
+        background: var(--gray-50);
+        padding: 1rem;
+        border-radius: 15px;
+        margin-bottom: 1.5rem;
+    }
+
+    .admin-contact p {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .admin-contact p:last-child {
+        margin-bottom: 0;
+    }
+
+    .admin-contact i {
+        width: 20px;
+        color: var(--primary-500);
+    }
+
+    .admin-social {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .social-link {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--gray-100);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-600);
+        transition: all 0.3s;
+    }
+
+    .social-link:hover {
+        background: var(--gradient-gold);
+        color: var(--white);
+        transform: translateY(-3px) rotate(360deg);
+    }
+
+    /* Default Admin Image */
+    .default-admin-image {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-size: 3rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* ==========================================================================
+       Project Cards
+       ========================================================================== */
+    .project-details-section {
+        padding: 5rem 0;
+        background: var(--white);
+    }
+
+    .project-card {
+        background: linear-gradient(135deg, var(--white), var(--gray-50));
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: var(--shadow-lg);
+        transition: all 0.3s;
+        height: 100%;
+        border: 1px solid var(--border-color);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .project-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient-gold);
+        transform: scaleX(0);
+        transition: transform 0.3s;
+    }
+
+    .project-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .project-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-2xl);
+    }
+
+    .project-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        background: var(--gradient-gold);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: var(--white);
+        box-shadow: 0 10px 20px rgba(229, 149, 40, 0.3);
+        transition: all 0.3s;
+    }
+
+    .project-card:hover .project-icon {
+        transform: scale(1.1) rotate(360deg);
+    }
+
+    .project-card h4 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+    }
+
+    .project-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        text-align: left;
+    }
+
+    .project-list li {
+        padding: 0.5rem 0;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .project-list li::before {
+        content: '•';
+        color: var(--primary-500);
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    /* ==========================================================================
+       Stats Section
+       ========================================================================== */
+    .stats-section {
+        background: linear-gradient(135deg, var(--primary-700), var(--primary-900));
+        padding: 4rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stats-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: rotate 60s linear infinite;
+    }
+
+    .stat-counter {
+        position: relative;
+        z-index: 2;
+    }
+
+    .stat-counter h3 {
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--white);
+        margin-bottom: 0.5rem;
+        text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .stat-counter p {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin: 0;
+        font-weight: 500;
+    }
+
+    /* ==========================================================================
+       Responsive Design
+       ========================================================================== */
+    @media (max-width: 992px) {
+        .about-content {
+            padding-left: 0;
+            margin-top: 2rem;
+        }
+
+        .about-title {
+            font-size: 2rem;
+        }
+
+        .about-features {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2.2rem;
+        }
+
+        .stat-counter h3 {
+            font-size: 2rem;
+        }
+
+        .stat-counter p {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .page-title {
+            font-size: 1.8rem;
+        }
+
+        .about-title {
+            font-size: 1.6rem;
+        }
+
+        .admin-profile-image {
+            width: 120px;
+            height: 120px;
+        }
+
+        .admin-profile-info h3 {
+            font-size: 1.4rem;
+        }
+    }
+
+    /* ==========================================================================
+       Default Image Styles
+       ========================================================================== */
+    .default-about-image {
+        background: linear-gradient(135deg, var(--primary-600), var(--primary-800));
+        height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .default-about-image::before {
+        content: '';
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        background: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 20px,
+            rgba(255,255,255,0.1) 20px,
+            rgba(255,255,255,0.1) 40px
+        );
+        animation: patternMove 20s linear infinite;
+    }
+
+    @keyframes patternMove {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .default-about-image i {
+        font-size: 6rem;
+        color: rgba(255,255,255,0.5);
+        z-index: 2;
+        animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes iconFloat {
+        0%, 100% {
+            transform: translateY(0) scale(1);
+        }
+        50% {
+            transform: translateY(-20px) scale(1.1);
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <!-- Page Header -->
 <section class="page-header">
@@ -26,7 +620,13 @@
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
                 <div class="about-image">
-                    <img src="https://via.placeholder.com/600x400" alt="About NoticeHub" class="img-fluid rounded-3">
+                    {% if about_image %}
+                    <img src="{{ about_image }}" alt="About NoticeHub" class="img-fluid">
+                    {% else %}
+                    <div class="default-about-image">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             <div class="col-lg-6" data-aos="fade-left">
@@ -44,7 +644,7 @@
                         physical paper notices getting lost or damaged. Everything is just a click away.
                     </p>
                     
-                    <div class="about-features mt-4">
+                    <div class="about-features">
                         <div class="feature-item">
                             <i class="fas fa-check-circle text-success"></i>
                             <span>Real-time updates and notifications</span>
@@ -73,7 +673,7 @@
 </section>
 
 <!-- Admin Profile Section -->
-<section class="admin-profile-section py-5 bg-light">
+<section class="admin-profile-section py-5">
     <div class="container">
         <div class="section-header text-center mb-5" data-aos="fade-up">
             <span class="section-subtitle">Meet Our</span>
@@ -82,27 +682,36 @@
         </div>
         
         <div class="row justify-content-center">
-            <div class="col-lg-6" data-aos="zoom-in">
+            <div class="col-lg-8" data-aos="zoom-in">
                 <div class="admin-profile-card">
                     <div class="admin-profile-image">
-                        <img src="{{ url_for('static', filename='uploads/profiles/' + (admin.profile_pic if admin else 'default.jpg')) }}" 
-                             alt="Admin Profile">
+                        {% if admin and admin.profile_pic %}
+                        <img src="{{ url_for('static', filename='uploads/profiles/' + admin.profile_pic) }}" 
+                             alt="{{ admin.full_name }}">
+                        {% else %}
+                        <div class="default-admin-image">
+                            <span>A</span>
+                        </div>
+                        {% endif %}
                     </div>
                     <div class="admin-profile-info">
-                        <h3>{{ admin.full_name if admin else 'System Administrator' }}</h3>
-                        <p class="admin-role">Lead Administrator</p>
+                        <h3>{{ admin.full_name if admin else 'Alex Thompson' }}</h3>
+                        <span class="admin-role">Lead Administrator</span>
                         <p class="admin-bio">
                             With over 10 years of experience in educational technology, our administrator ensures 
-                            that all notices are properly managed and students never miss important updates.
+                            that all notices are properly managed and students never miss important updates. 
+                            Passionate about creating seamless digital experiences for educational institutions.
                         </p>
                         <div class="admin-contact">
-                            <p><i class="fas fa-envelope"></i> {{ admin.email if admin else 'admin@noticehub.com' }}</p>
-                            <p><i class="fas fa-phone"></i> {{ admin.phone if admin else '+1 234 567 8900' }}</p>
+                            <p><i class="fas fa-envelope"></i> {{ admin.email if admin else 'alex.thompson@noticehub.com' }}</p>
+                            <p><i class="fas fa-phone"></i> {{ admin.phone if admin else '+1 (555) 123-4567' }}</p>
+                            <p><i class="fas fa-map-marker-alt"></i> San Francisco, CA</p>
                         </div>
                         <div class="admin-social">
                             <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
                             <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
                             <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
                         </div>
                     </div>
                 </div>
@@ -128,10 +737,10 @@
                     </div>
                     <h4>Technologies Used</h4>
                     <ul class="project-list">
-                        <li>Python Flask</li>
-                        <li>SQLAlchemy</li>
-                        <li>Bootstrap 5</li>
-                        <li>JavaScript</li>
+                        <li>Python Flask Framework</li>
+                        <li>SQLAlchemy ORM</li>
+                        <li>Bootstrap 5 & Font Awesome</li>
+                        <li>JavaScript & AOS Library</li>
                         <li>SQLite Database</li>
                     </ul>
                 </div>
@@ -144,11 +753,11 @@
                     </div>
                     <h4>Key Features</h4>
                     <ul class="project-list">
-                        <li>User Authentication</li>
-                        <li>Role-based Access</li>
-                        <li>Notice Management</li>
-                        <li>Save/Share Notices</li>
-                        <li>Contact System</li>
+                        <li>Secure User Authentication</li>
+                        <li>Role-based Access Control</li>
+                        <li>Complete Notice Management</li>
+                        <li>Save & Share Notices</li>
+                        <li>Contact & Support System</li>
                     </ul>
                 </div>
             </div>
@@ -160,11 +769,11 @@
                     </div>
                     <h4>Future Plans</h4>
                     <ul class="project-list">
-                        <li>Mobile App</li>
-                        <li>Email Notifications</li>
-                        <li>SMS Alerts</li>
-                        <li>Analytics Dashboard</li>
-                        <li>API Integration</li>
+                        <li>Native Mobile Applications</li>
+                        <li>Real-time Email Notifications</li>
+                        <li>SMS Alert System</li>
+                        <li>Advanced Analytics Dashboard</li>
+                        <li>RESTful API Integration</li>
                     </ul>
                 </div>
             </div>
@@ -173,18 +782,18 @@
 </section>
 
 <!-- Stats Section -->
-<section class="stats-section py-5 bg-primary text-white">
+<section class="stats-section py-5">
     <div class="container">
         <div class="row text-center">
             <div class="col-md-3 col-6 mb-4 mb-md-0" data-aos="fade-up">
                 <div class="stat-counter">
-                    <h3 class="counter">1500+</h3>
-                    <p>Active Users</p>
+                    <h3 class="counter">15,000+</h3>
+                    <p>Active Students</p>
                 </div>
             </div>
             <div class="col-md-3 col-6 mb-4 mb-md-0" data-aos="fade-up" data-aos-delay="100">
                 <div class="stat-counter">
-                    <h3 class="counter">500+</h3>
+                    <h3 class="counter">2,500+</h3>
                     <p>Notices Posted</p>
                 </div>
             </div>
@@ -196,8 +805,8 @@
             </div>
             <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="300">
                 <div class="stat-counter">
-                    <h3 class="counter">100%</h3>
-                    <p>Satisfaction</p>
+                    <h3 class="counter">98%</h3>
+                    <p>Satisfaction Rate</p>
                 </div>
             </div>
         </div>
